@@ -1,0 +1,31 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Layer Structures{% endblock %}
+
+{% block table_headers %}
+  <th>Layer Structure ID</th>
+  <th> Name </th>
+  <th>Materials</th>
+  <th>Actions</th> 
+{% endblock %}
+
+{% block table_body %}
+  {% for layerstructure in object_list %}
+    <tr>
+      <td>{{ layerstructure.id }}</td>
+      <td>{{ layerstructure.name }}</td> 
+      <td>
+        {% for material in layer_structure.ordered_materials %}  
+        {{ material }}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+      </td> 
+      <td>
+        <a href="{% url 'layerstructure_delete' layerstructure.pk %}">Delete</a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+  <a href="{% url 'layerstructure_create' %}" class="btn btn-primary">Add New Layer Structure</a>
+{% endblock %}

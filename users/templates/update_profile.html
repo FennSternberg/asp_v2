@@ -1,0 +1,41 @@
+{% extends 'base.html' %}{% block content %}
+{% load static %}
+
+<!-- Add to the head section -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Add the Select2 library -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+<!-- Your Django Select2 CSS and JS -->
+<link href="{% static 'django_select2/django_select2.css' %}" rel="stylesheet">
+<script src="{% static 'django_select2/django_select2.js' %}"></script>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mx-auto">
+        <h2>Update Profile</h2>
+        <form method="post">
+          {% csrf_token %}
+        
+          {{ user_form.as_p }}
+    
+          {{ profile_form.as_p }}
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+      </div>
+    </div> 
+  </div>
+  <script>
+    $(document).ready(function() {
+      $('.django-select2').select2(
+        {
+          theme: 'bootstrap-5',
+          tags: true,
+          data: $(this).data('choices')
+        }
+      );
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,39 @@
+<style *scoped>
+  .slim-navbar {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary slim-navbar">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'layerstructure_list' %}">Layer Structure</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'material_list' %}">Material</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTests" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Tests
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownTests">
+              <a class="dropdown-item" href="{% url 'wvtrdata_list' %}">WVTR</a>
+              <a class="dropdown-item" href="{% url 'densitydata_list' %}">Density</a>
+              <a class="dropdown-item" href="{% url 'youngsmodulusdata_list' %}">Young's Modulus</a>
+              <a class="dropdown-item" href="{% url 'tensilecurvedata_list' %}">Tensile Curve</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Applications
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'thermoformingdata_list' %}">Thermoforming</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>

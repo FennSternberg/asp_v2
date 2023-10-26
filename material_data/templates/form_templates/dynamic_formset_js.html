@@ -1,0 +1,70 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+<script>
+    const app = Vue.createApp({
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                fields: {{ formset_fields | safe }},
+                formsetName: "{{ formset_name }}", 
+                points:  {{ formset_initial | safe }}
+
+            };
+        },
+        methods: {
+            parseExcelFile() {
+                const fileInput = document.getElementById('excelFile');
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert("Please select a file");
+                    return;
+                }
+                // Read the Excel file using the 'xlsx' library
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const data = event.target.result;
+                    const workbook = XLSX.read(data, { type: 'binary' });
+                    const firstSheet = workbook.SheetNames[0];
+                    const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+                    
+                    // Populate 'points' array dynamically based on all field names
+                    this.points = sheetData.map(row => {
+                        const point = { is_deleted: false };
+                        this.fields.forEach(field => {
+                            const fieldName = field.field;
+                            point[fieldName] = row[fieldName];
+                        });
+                        return point;
+                    });
+                    this.updateTotalForms();
+                };
+                reader.readAsBinaryString(file);
+            },
+            isFieldRequired(field, point) {
+                return field.required === 'true' && !point.is_deleted;
+            },
+            updateTotalForms() {
+                document.getElementById(`id_${this.formsetName}-TOTAL_FORMS`).value = this.points.length;
+    
+            },
+            addPoint() {
+                const newPoint = { is_deleted: false };
+                this.fields.forEach(field => {
+                    newPoint[field.field] = '';
+                });
+                this.points.push(newPoint);
+                this.updateTotalForms();
+            },
+            removePoint(index) { 
+                this.points[index].is_deleted = true; 
+                this.updateTotalForms();
+            }
+            
+        },
+        mounted() {
+            console.log(this.points)
+            this.updateTotalForms();
+        }
+    });
+    app.mount('#app');
+    </script>

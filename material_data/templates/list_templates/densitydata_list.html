@@ -1,0 +1,32 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Density Data{% endblock %}
+
+{% block table_headers %}
+    <th> Test ID </th>
+    <th>Material ID</th>
+    <th>Material Name</th>
+    <th>Density ({{field_units.density}})</th>
+    <th>Temperature ({{field_units.temperature}})</th>
+    <th>Actions</th>
+{% endblock %}
+
+{% block table_body %}
+    {% for data in object_list %}
+    <tr> 
+        <td>{{ data.id }}</td>
+        <td>{{ data.material.id }}</td>
+        <td>{{ data.material.name }}</td>
+        <td>{{ data.density }}</td>
+        <td>{{ data.temperature }}</td>
+        <td>
+            <a href="{% url 'densitydata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'densitydata_delete' data.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+    <a href="{% url 'densitydata_create' %}" class="btn btn-primary">Add New Data</a>
+{% endblock %}

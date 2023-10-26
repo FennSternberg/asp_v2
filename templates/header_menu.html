@@ -1,0 +1,57 @@
+{% load static %}
+<style>
+  .navbar {
+    z-index: 1000;  
+  }
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'homepage' %}">
+      <img src="{% static 'images/amcor_logo_white_trans.png' %}" alt="Amcor Logo" height="50">
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% if user.is_authenticated %}
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'homepage' %}">New Request</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="">My Jobs</a>
+        </li>
+        {% if user.userprofile.usergroup in "admin,manager" %}
+        <li class="nav-item">
+          <a class="nav-link" href="">All Jobs</a>
+        </li>
+        {% endif %}
+        {% if user.userprofile.usergroup in "admin,quote-admin" %}
+        <li class="nav-item">
+          <a class="nav-link" href="">All Quotes</a>
+        </li>
+        {% endif %}
+        {% if user.userprofile.usergroup == "admin" %}
+        <li class="nav-item">
+          <a class="nav-link" href="">Admin</a>
+        </li>
+        {% endif %}
+      </ul>
+      <span class="navbar-text me-3">Logged in as: {{ user.username }}</span>
+      <a class="btn btn-outline-light" href="{% url 'logout' %}">Logout</a>
+      {% else %}
+        {% if request.path != "/login/" %}
+          <a class="btn btn-outline-light ms-auto me-4" href="{% url 'login' %}">Login</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,39 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}WVTR Data{% endblock %}
+
+{% block table_headers %}
+    <th> Test ID </th>
+    <th>Material ID</th>
+    <th>Material Name</th>
+
+    <th>Temperature ({{field_units.temperature}})</th>
+    <th>RH ({{field_units.RH}})</th>
+    <th>WVTR ({{field_units.WVTR}})</th>
+    <th>Diffusivity ({{field_units.diffusivity}})</th> 
+    <th>Solubility ({{field_units.solubility}})</th>
+    <th>Actions</th>
+{% endblock %}
+
+{% block table_body %}
+    {% for data in object_list %}
+    <tr>
+        <td>{{ data.id }}</td>
+        <td>{{ data.material.id }}</td> 
+        <td>{{ data.material.name }}</td>
+        <td>{{ data.temperature }}</td>
+        <td>{{ data.RH }}</td>
+        <td>{{ data.transmission_rate }}</td>
+        <td>{{ data.diffusivity }}</td>
+        <td>{{ data.solubility }}</td>
+        <td>
+            <a href="{% url 'wvtrdata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'wvtrdata_delete' data.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+    <a href="{% url 'wvtrdata_create' %}" class="btn btn-primary">Add New Data</a>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Thermoforming Material Data{% endblock %}
+
+{% block table_headers %}
+    <th>Thermoform Data ID</th>
+    <th>Material ID</th>
+    <th>Material Name</th>
+    <th># WVTR</th>
+    <th># Density</th>
+    <th># YM CD</th>
+    <th># YM MD</th>
+    <th># Stress-Strain CD</th>
+    <th># Stress-Strain MD</th>
+    <th>Actions</th>
+{% endblock %} 
+
+{% block table_body %}
+    {% for data in object_list %}
+    <tr>
+        <td>{{ data.id }}</td>
+        <td>{{ data.material.id }}</td>
+        <td>{{ data.material.name }}</td>
+        <td>{{ data.wvtr_count }}</td>
+        <td>{{ data.density_count }}</td> 
+        <td>{{ data.YM_CD_count }}</td> 
+        <td>{{ data.YM_MD_count }}</td> 
+        <td>{{ data.tensile_CD_count }}</td> 
+        <td>{{ data.tensile_MD_count }}</td> 
+        <td>
+            <a href="{% url 'thermoformingdata_delete' data.pk %}">Delete</a> |
+            <a href="{% url 'thermoformingdata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'thermoformingdata_detail' data.pk %}">Summary</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+    <a href="{% url 'thermoformingdata_create' %}" class="btn btn-primary">Add New Data</a>
+{% endblock %}

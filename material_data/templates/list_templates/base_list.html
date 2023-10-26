@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'materialnavbar.html' %}
+
+
+<div class="container mt-5 mb-5">
+    <form method="get" class="my-3">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search material..." value="{{ request.GET.search }}">
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="submit">Search</button>
+            </span>
+        </div>
+      </form>
+    <h2>{% block list_title %}{% endblock %}</h2>
+    <table  class="table mt-3">
+        <thead> 
+            <tr>
+                {% block table_headers %}{% endblock %}
+            </tr>
+        </thead>
+        <tbody>
+            {% block table_body %}{% endblock %}
+        </tbody>
+    </table>
+    {% block additional_actions %}{% endblock %}
+</div>
+{% endblock %} 

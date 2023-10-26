@@ -1,0 +1,36 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Materials{% endblock %}
+
+{% block table_headers %}
+  <th>Material ID</th>
+  <th>Name</th>
+  <th>Thickness ({{ field_units.thickness }})</th>
+  <th>Thermoforming</th>
+  <th>Actions</th>
+{% endblock %}
+
+{% block table_body %}
+  {% for data in object_list %}
+    <tr>
+      <td>{{ data.id }}</td>
+      <td>{{ data.name }}</td>
+      <td>{{ data.thickness }}</td> 
+      <td>
+        {% if data.thermoforming_data %}
+          <a href="{% url 'thermoformingdata_detail' data.thermoforming_data.pk %}">Summary</a>
+        {% else %}
+          None
+        {% endif %} 
+      </td>
+      <td>
+        <a href="{% url 'material_update' data.pk %}">Edit</a> | 
+        <a href="{% url 'material_delete' data.pk %}">Delete</a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+  <a href="{% url 'material_create' %}" class="btn btn-primary">Add New Material</a>
+{% endblock %}

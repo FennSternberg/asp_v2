@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.prod.js"></script>
+{% endblock %}
+
+{% block content %}
+{% include 'materialnavbar.html' %}
+<div class="container mt-5" id="app">
+    <h1>{{ form_title }}</h1>
+    
+    <!-- Display context only for Update Views -->
+    {% if display_context %} 
+    <div class="mt-4">
+        {% for key, value in display_context.items %}
+            <b>{{ key|title }}: </b>{{ value }}
+            <br>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            {% for field in form %}
+            <p>
+                {{ field.label_tag }}
+                {% if field.help_text %}
+                <span class="unit">({{ field.help_text }})</span>
+                {% endif %}
+                {{ field }}
+            </p>
+            {% endfor %}
+        </div>
+
+        <!-- Formset and Excel upload for Create and Update Views -->
+        {% if formset %}
+        {% if upload_excel_flag %}
+            <input type="file" id="excelFile" accept=".xlsx" />
+            <button type="button" @click="parseExcelFile">Upload Excel</button>
+        {% endif %}
+        {% include 'form_templates/dynamic_formset_body.html' %}
+        {% endif %}
+        
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+
+{% include 'form_templates/dynamic_formset_js.html' %}
+
+{% endblock %}

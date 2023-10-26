@@ -1,0 +1,36 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Youngs Modulus Data{% endblock %}
+
+{% block table_headers %}
+    <th> Test ID </th>
+    <th>Material ID</th>
+    <th>Material Name</th>
+    <th>Youngs Modulus ({{field_units.youngs_modulus}})</th>
+    <th>Poissons Ratio ({{field_units.poissons_ratio}})</th>
+    <th>Temperature ({{field_units.temperature}})</th>
+    <th>Direction</th>
+    <th> Actions </th>
+{% endblock %} 
+
+{% block table_body %}
+    {% for data in object_list %}
+    <tr>
+        <td>{{ data.id }}</td>
+        <td>{{ data.material.id }}</td>
+        <td>{{ data.material.name }}</td>
+        <td>{{ data.youngs_modulus }}</td>
+        <td>{{ data.poissons_ratio }}</td>
+        <td>{{ data.temperature }}</td>
+        <td>{{ data.direction }}</td>
+        <td>
+            <a href="{% url 'youngsmodulusdata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'youngsmodulusdata_delete' data.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+    <a href="{% url 'youngsmodulusdata_create' %}" class="btn btn-primary">Add New Data</a>
+{% endblock %}

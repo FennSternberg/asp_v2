@@ -1,0 +1,50 @@
+<!-- sidebar.html -->
+<style>
+    #expand-btn-wrapper {
+      position: fixed;
+      top: 0;  /* Adjust this if needed */
+      left: 0;
+      z-index: 999;
+      height: 100vh;  /* covers 100% of the viewable screen height */
+      width: 30px;
+    }
+    
+    #expand-btn {
+      color: white;
+      border: none;
+      height: 100%;
+      width: 100%;
+    }
+    
+    #expand-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+</style>
+    <!-- Button to toggle sidebar -->
+    <div id="expand-btn-wrapper">
+        <button id="expand-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" class="bg-dark">
+          <span id="expand-text"> &raquo;</span>
+        </button>
+    </div>
+    
+    <!-- Off-canvas sidebar -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+      <div class="offcanvas-header">
+        <h5 id="offcanvasSidebarLabel">Profile Information</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        {% if user.is_authenticated %}
+          <h5>{{ user.first_name }} {{ user.last_name }}</h5>
+          <p>Email: {{ user.email }}</p>
+          <p>Location: {{ user.userprofile.location }}</p>
+          <a href="{% url 'update_profile' %}" class="btn btn-primary">Edit Profile</a>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+    

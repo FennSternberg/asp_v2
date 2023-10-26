@@ -1,0 +1,36 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Tensile Curve Data{% endblock %}
+
+{% block table_headers %}
+    <th> Test ID </th> 
+    <th>Material ID</th>
+    <th>Material Name</th>
+    <th>Strain Rate ({{field_units.strain_rate}})</th>
+    <th>Temperature ({{field_units.temperature}})</th>
+    <th>Direction</th>
+    <th># Points</th>
+    <th> Actions </th>
+{% endblock %}
+
+{% block table_body %}
+    {% for data in object_list %}
+    <tr>
+        <td>{{ data.id }}</td>
+        <td>{{ data.material.id }}</td>
+        <td>{{ data.material.name }}</td> 
+        <td>{{ data.strain_rate }}</td>
+        <td>{{ data.temperature }}</td>
+        <td>{{ data.direction }}</td>
+        <td>{{ data.point_count }}</td>
+        <td>
+            <a href="{% url 'tensilecurvedata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'tensilecurvedata_delete' data.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+    <a href="{% url 'tensilecurvedata_create' %}" class="btn btn-primary">Add New Data</a>
+{% endblock %}
