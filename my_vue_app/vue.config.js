@@ -18,5 +18,6 @@ module.exports = defineConfig({
   pages: {
     verificationVue: "src/main.js",
     layerStructureFormVue: "src/layerStructure.js",
+    formsetTableVue : "src/formsetTable.js"
   },
 });

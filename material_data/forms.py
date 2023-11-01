@@ -1,5 +1,6 @@
 from django import forms
 from .models import  ColdformingStamp, LayerStructure, Material, DensityData, OTRData, WVTRData,ColdformingData, ThermoformingData, ThermoformingLidData, YoungsModulusData,  TensileCurveData, DruckerPragerCurveData
+from django_select2.forms import ModelSelect2Widget
 
 
 class BaseUnitForm(forms.ModelForm):
@@ -104,12 +105,11 @@ class BaseWVTRDataForm(BaseUnitForm, forms.ModelForm):
         model = WVTRData
         fields = [ 'temperature', 'RH', 'WVTR', 'diffusivity', 'solubility']
 
-class CreateWVTRDataForm(BaseWVTRDataForm):
+class CreateWVTRDataForm(BaseWVTRDataForm):        
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
-
     class Meta(BaseWVTRDataForm.Meta):
         fields = ['material'] + BaseWVTRDataForm.Meta.fields
 
@@ -145,7 +145,7 @@ class BaseOTRDataForm(BaseUnitForm, forms.ModelForm):
 class CreateOTRDataForm(BaseOTRDataForm):
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
 
     class Meta(BaseOTRDataForm.Meta):
@@ -172,7 +172,7 @@ class BaseDensityDataForm(BaseUnitForm,forms.ModelForm):
 class CreateDensityDataForm(BaseDensityDataForm):
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
 
     class Meta(BaseDensityDataForm.Meta):
@@ -204,7 +204,7 @@ class BaseYoungsModulusDataForm(BaseUnitForm,forms.ModelForm):
 class CreateYoungsModulusDataForm(BaseYoungsModulusDataForm):
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
 
     class Meta(BaseYoungsModulusDataForm.Meta):
@@ -217,7 +217,7 @@ class UpdateYoungsModulusDataForm(BaseYoungsModulusDataForm):
 class ThermoformingDataForm(forms.ModelForm): 
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
     class Meta:
         model = ThermoformingData
@@ -280,7 +280,7 @@ class ThermoformingDataUpdateForm(forms.ModelForm):
 class ColdformingDataForm(forms.ModelForm): 
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
     class Meta:
         model = ColdformingData
@@ -327,7 +327,7 @@ class ColdformingDataUpdateForm(forms.ModelForm):
 class ThermoformingLidDataForm(forms.ModelForm): 
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
     class Meta:
         model = ThermoformingLidData
@@ -381,7 +381,7 @@ class BaseTensileCurveDataForm(BaseUnitForm,forms.ModelForm):
 class CreateTensileCurveDataForm(BaseTensileCurveDataForm):
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
     class Meta(BaseTensileCurveDataForm.Meta):
         fields = ['material'] + BaseTensileCurveDataForm.Meta.fields
@@ -413,7 +413,7 @@ class BaseDruckerPragerCurveDataForm(BaseUnitForm,forms.ModelForm):
 class CreateDruckerPragerCurveDataForm(BaseDruckerPragerCurveDataForm):
     material = forms.ModelChoiceField(
         queryset=Material.objects.all(), 
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control select2'})
     )
     class Meta(BaseDruckerPragerCurveDataForm.Meta):
         fields = ['material'] + BaseDruckerPragerCurveDataForm.Meta.fields

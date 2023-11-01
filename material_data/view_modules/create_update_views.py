@@ -129,7 +129,6 @@ class WVTRDataUpdateView(WVTRDataFormMixin, UpdateView):
         context['form_title'] = 'Update WVTR Data'
         context['display_context'] = {
             "material": self.object.material,
-    
             "wvtr id": self.object.id
         }
         return context
