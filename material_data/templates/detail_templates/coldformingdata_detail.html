@@ -1,5 +1,5 @@
 
-{% extends 'list_templates/base_list.html' %}
+{% extends 'base.html' %}
 {% block content %}
 {% include 'materialnavbar.html' %}
 <div class="container my-4">
@@ -11,7 +11,7 @@
   <div class="row">
     <div class="col-md-6">
       <div class="card"> 
-        <div class="card-header">
+        <div class="card-header"> 
           <h3>Youngs Modulus</h3>
         </div>
         <table class="table table-striped">
@@ -41,7 +41,6 @@
       </div>
     </div>
   </div>
-
   <div class="row">
     <div class="col-md-12">
       <div class="card">
@@ -70,9 +69,7 @@
                   </tr>
             {% endfor %}
           </tbody>
-          
         </table>
-       
       </div>
     </div>
   </div>
@@ -106,17 +103,13 @@
                   </tr>
             {% endfor %}
           </tbody>
-          
         </table>
        
       </div>
     </div>
   </div>
 </div>
-
 <script> 
-    // Plotting Tensile Data
-
     data = '{{ tensile_data_json|safe }}';  
 
     curveData = JSON.parse(data);

@@ -5,9 +5,9 @@ urlpatterns = [
      path('guide/', views.guide, name='material_guide'),
 
 
-    path('api/thermoformingdata/<int:thermoforming_id>/', views.ThermoformingDataAPI.as_view(), name='thermoformingdata_api'),
-    path('api/coldformingdata/<int:coldforming_id>/', views.ColdformingDataAPI.as_view(), name='coldformingdata_api'),
-    path('api/thermoformingliddata/<int:thermoforming_lid_id>/', views.ThermoformingLidDataAPI.as_view(), name='thermoformingliddata_api'),
+    path('api/thermoformingdata//<int:pk>/', views.ThermoformingDataAPI.as_view(), name='thermoformingdata_api'),
+    path('api/coldformingdata//<int:pk>/', views.ColdformingDataAPI.as_view(), name='coldformingdata_api'),
+    path('api/thermoformingliddata//<int:pk>/', views.ThermoformingLidDataAPI.as_view(), name='thermoformingliddata_api'),
 
     path('', views.MaterialListView.as_view(), name='material_list'),
     path('new/', views.MaterialCreateView.as_view(), name='material_create'),

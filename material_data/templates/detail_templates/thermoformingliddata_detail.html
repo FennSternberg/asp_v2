@@ -1,5 +1,5 @@
 
-{% extends 'list_templates/base_list.html' %}
+{% extends 'base.html' %}
 {% block content %}
 {% include 'materialnavbar.html' %}
 <div class="container my-4">
@@ -31,7 +31,7 @@
               <td> {{ data.WVTR}} </td>
               <td> <a href="{% url 'wvtrdata_update' data.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a> </td>
             </tr>
-            {% endfor %}
+            {% endfor %} 
           </tbody>
         </table>
       </div>
