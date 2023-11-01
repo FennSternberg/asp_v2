@@ -1,0 +1,38 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Drucker Prager Curve Data{% endblock %}
+
+{% block table_headers %}
+    <th> Test ID </th> 
+    <th>Material ID</th>
+    <th>Material Name</th>
+    <th>Input 1 ({{field_units.input1}})</th>
+    <th>Input 2 ({{field_units.input2}})</th>
+    <th>Input 3 ({{field_units.input3}})</th>
+    <th>Direction</th>
+    <th># Points</th>
+    <th> Actions </th>
+{% endblock %}
+
+{% block table_body %}
+    {% for data in object_list %}
+    <tr>
+        <td>{{ data.id }}</td>
+        <td>{{ data.material.id }}</td>
+        <td>{{ data.material.name }}</td> 
+        <td>{{ data.input1 }}</td>
+        <td>{{ data.input2 }}</td>
+        <td>{{ data.input3 }}</td>
+        <td>{{ data.direction }}</td>
+        <td>{{ data.point_count }}</td>
+        <td>
+            <a href="{% url 'druckerpragercurvedata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'druckerpragercurvedata_delete' data.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+    <a href="{% url 'druckerpragercurvedata_create' %}" class="btn btn-primary">Add New Data</a>
+{% endblock %}

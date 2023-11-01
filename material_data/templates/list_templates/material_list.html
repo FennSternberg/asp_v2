@@ -6,7 +6,9 @@
   <th>Material ID</th>
   <th>Name</th>
   <th>Thickness ({{ field_units.thickness }})</th>
-  <th>Thermoforming</th>
+  <th>Coldforming Cavity</th>
+  <th>Thermoforming Cavity</th>
+  <th>Thermoforming Lid</th>
   <th>Actions</th>
 {% endblock %}
 
@@ -17,8 +19,22 @@
       <td>{{ data.name }}</td>
       <td>{{ data.thickness }}</td> 
       <td>
+        {% if data.coldforming_data %}
+          <a href="{% url 'coldformingdata_detail' data.coldforming_data.pk %}">Summary</a>
+        {% else %}
+          None
+        {% endif %} 
+      </td>
+      <td>
         {% if data.thermoforming_data %}
           <a href="{% url 'thermoformingdata_detail' data.thermoforming_data.pk %}">Summary</a>
+        {% else %}
+          None
+        {% endif %} 
+      </td>
+      <td>
+        {% if data.thermoforminglid_data %}
+          <a href="{% url 'thermoformingliddata_detail' data.thermoforminglid_data.pk %}">Summary</a>
         {% else %}
           None
         {% endif %} 

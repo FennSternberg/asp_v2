@@ -69,8 +69,8 @@ export default {
   },
   props: {
     internalContactChoices: Array,
-    currentUserId: [String, Number, null], // It could be null if the user is not authenticated
-    errors: Object, // <-- New prop to accept errors
+    currentUserId: [String, Number, null], 
+    errors: Object, 
   },
   methods: {
     validateThisForm() {
@@ -79,7 +79,7 @@ export default {
         customer: this.customer,
         internal_contact: this.internal_contact,
       };
-      this.validateForm("/validate_analysis_details/", postData);
+      this.validateForm("/ASP/validate_analysis_details/", postData);
     },
   },
 };

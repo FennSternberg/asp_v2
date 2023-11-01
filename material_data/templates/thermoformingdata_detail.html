@@ -28,7 +28,7 @@
             <tr>
               <td>  {{ data.temperature }} </td>
               <td> {{ data.RH}} </td>
-              <td> {{ data.transmission_rate}} </td>
+              <td> {{ data.WVTR}} </td>
               <td> <a href="{% url 'wvtrdata_update' data.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a> </td>
             </tr>
             {% endfor %}
@@ -36,7 +36,34 @@
         </table>
       </div>
     </div>
-
+    <div class="col-md-6">
+      <div class="card"> 
+        <div class="card-header">
+          <h3>OTR</h3>
+        </div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th> Temperature </th>
+              <th> RH </th>
+              <th> OTR </th>
+              <th> Action </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in otr_data %}
+            <tr>
+              <td>  {{ data.temperature }} </td>
+              <td> {{ data.RH}} </td>
+              <td> {{ data.OTR}} </td>
+              <td> <a href="{% url 'otrdata_update' data.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a> </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md-6">
       <div class="card"> 

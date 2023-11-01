@@ -1,0 +1,178 @@
+
+{% extends 'list_templates/base_list.html' %}
+{% block content %}
+{% include 'materialnavbar.html' %}
+<div class="container my-4">
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">Coldforming Material Data for {{ object.material.name }}  <a href="{% url 'coldformingdata_api' object.pk %}" class="btn btn-outline-secondary btn-sm">API View</a></h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card"> 
+        <div class="card-header">
+          <h3>Youngs Modulus</h3>
+        </div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Poisson's Ratio</th>
+              <th>Direction</th>
+              <th>Temperature</th>
+              <th>Young's Modulus</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in youngs_modulus_data %}
+                  <tr>
+                    <td>{{ data.poissons_ratio }}</td>
+                    <td>{{ data.direction }}</td>
+                    <td>{{ data.temperature }}</td>
+                    <td>{{ data.youngs_modulus }}</td>
+                    <td>
+                      <a href="{% url 'youngsmodulusdata_update' data.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    </td>
+                  </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3>Tensile </h3>
+        </div>
+           <div id="tensile-plotly-div"></div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Strain Rate</th>
+              <th>Temperature</th>
+              <th>Direction</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in tensile_data %}
+                  <tr>
+                    <td>{{ data.strain_rate }}</td>
+                    <td>{{ data.temperature }}</td>
+                    <td>{{ data.direction }}</td>
+                    <td>
+                      <a href="{% url 'tensilecurvedata_update' data.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    </td>
+                  </tr>
+            {% endfor %}
+          </tbody>
+          
+        </table>
+       
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3>Drucker Prager </h3>
+        </div>
+           <div id="drucker-prager-plotly-div"></div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>input1</th>
+              <th>input2</th>
+              <th>input3</th>
+              <th>Direction</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in drucker_prager_data %}
+                  <tr>
+                    <td>{{ data.input1 }}</td>
+                    <td>{{ data.input2 }}</td>
+                    <td>{{ data.input3 }}</td>
+                    <td>{{ data.direction }}</td>
+                    <td>
+                      <a href="{% url 'druckerpragercurvedata_update' data.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    </td>
+                  </tr>
+            {% endfor %}
+          </tbody>
+          
+        </table>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+<script> 
+    // Plotting Tensile Data
+
+    data = '{{ tensile_data_json|safe }}';  
+
+    curveData = JSON.parse(data);
+    console.log(curveData)
+    traces = []; 
+    curveData.forEach((curve, index) => {
+    trace = {
+        x: curve.strains,
+        y: curve.stresses,
+        mode: 'lines+markers',
+        name: `SR: ${curve.strain_rate}, Temp : ${curve.temperature}, Dir: ${curve.direction}`,
+    };
+    traces.push(trace);
+    });
+
+    // Layout for the graph
+    layout = {
+    hoverlabel: {namelength: -1},
+    title: 'Stress Vs Strain',
+    xaxis: { title: 'Strain' },
+    yaxis: { title: 'Stress' },
+    };
+
+    // Create the graph
+    Plotly.newPlot('tensile-plotly-div', traces, layout);
+
+
+    // Plotting Drucker Prager Data
+
+    data = '{{ drucker_prager_data_json|safe }}';  
+
+    curveData = JSON.parse(data);
+    console.log(curveData)
+    traces = []; 
+    curveData.forEach((curve, index) => {
+    trace = {
+        x: curve.strains,
+        y: curve.stresses,
+        mode: 'lines+markers',
+        name: `input1: ${curve.input1}, input2 : ${curve.input2}, input3 : ${curve.input3}, Dir: ${curve.direction}`,
+    };
+    traces.push(trace);
+    });
+
+    // Layout for the graph
+    layout = {
+    hoverlabel: {namelength: -1},
+    title: 'Stress Vs Strain',
+    xaxis: { title: 'Strain' },
+    yaxis: { title: 'Stress' },
+    };
+
+    // Create the graph
+    Plotly.newPlot('drucker-prager-plotly-div', traces, layout);
+
+  </script>
+  
+  
+{% endblock %} 

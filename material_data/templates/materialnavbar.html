@@ -9,6 +9,9 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'material_guide' %}">Guide</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'layerstructure_list' %}">Layer Structure</a>
           </li>
           <li class="nav-item">
@@ -20,9 +23,11 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownTests">
               <a class="dropdown-item" href="{% url 'wvtrdata_list' %}">WVTR</a>
+              <a class="dropdown-item" href="{% url 'otrdata_list' %}">OTR</a>
               <a class="dropdown-item" href="{% url 'densitydata_list' %}">Density</a>
               <a class="dropdown-item" href="{% url 'youngsmodulusdata_list' %}">Young's Modulus</a>
               <a class="dropdown-item" href="{% url 'tensilecurvedata_list' %}">Tensile Curve</a>
+              <a class="dropdown-item" href="{% url 'druckerpragercurvedata_list' %}">Drucker Prager Curve</a>
             </div>
           </li>
           <li class="nav-item dropdown">
@@ -30,7 +35,17 @@
               Applications
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="{% url 'thermoformingdata_list' %}">Thermoforming</a>
+              <a class="dropdown-item" href="{% url 'coldformingdata_list' %}">Coldforming Cavity</a>
+              <a class="dropdown-item" href="{% url 'thermoformingdata_list' %}">Thermoforming Cavity</a>
+              <a class="dropdown-item" href="{% url 'thermoformingliddata_list' %}">Thermoforming Lid</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Other
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'coldformingstamp_list' %}">Coldforming Stamp Material</a>
             </div>
           </li>
         </ul>

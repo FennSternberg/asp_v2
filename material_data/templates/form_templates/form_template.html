@@ -6,44 +6,60 @@
 
 {% block content %}
 {% include 'materialnavbar.html' %}
+
 <div class="container mt-5" id="app">
-    <h1>{{ form_title }}</h1>
-    
-    <!-- Display context only for Update Views -->
-    {% if display_context %} 
-    <div class="mt-4">
-        {% for key, value in display_context.items %}
-            <b>{{ key|title }}: </b>{{ value }}
-            <br>
-        {% endfor %}
-    </div>
-    {% endif %}
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <h1 class="mb-4">{{ form_title }}</h1>
 
-    <form method="post" class="mt-4">
-        {% csrf_token %}
-        <div class="mb-3">
-            {% for field in form %}
-            <p>
-                {{ field.label_tag }}
-                {% if field.help_text %}
-                <span class="unit">({{ field.help_text }})</span>
+            <!-- Display context only for Update Views -->
+            {% if display_context %} 
+            <div class="mt-4 mb-4">
+                {% for key, value in display_context.items %}
+                    <b>{{ key|title }}: </b>{{ value }}
+                    <br>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}
+                            {% if field.help_text %}
+                            ({{ field.help_text }})
+                            {% endif %}
+                        </label>
+                        {{ field }}
+                     
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Formset and Excel upload for Create and Update Views -->
+                {% if formset %}
+                <div class="mb-3">
+                    {% if upload_excel_flag %}
+                    <div class="row align-items-center mb-3">
+                        <div class="col-8">
+                            <input type="file" id="excelFile" class="form-control" accept=".xlsx" />
+                        </div>
+                        <div class="col-4 text-end">
+                            <button type="button" class="btn btn-secondary" @click="parseExcelFile">Upload Excel</button>
+                        </div>
+                    </div>
+                    
+                    {% endif %}
+                    {% include 'form_templates/dynamic_formset_body.html' %}
+                </div>
                 {% endif %}
-                {{ field }}
-            </p>
-            {% endfor %}
-        </div>
 
-        <!-- Formset and Excel upload for Create and Update Views -->
-        {% if formset %}
-        {% if upload_excel_flag %}
-            <input type="file" id="excelFile" accept=".xlsx" />
-            <button type="button" @click="parseExcelFile">Upload Excel</button>
-        {% endif %}
-        {% include 'form_templates/dynamic_formset_body.html' %}
-        {% endif %}
-        
-        <button type="submit" class="btn btn-primary">Save</button>
-    </form>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 {% include 'form_templates/dynamic_formset_js.html' %}

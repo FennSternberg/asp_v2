@@ -1,0 +1,28 @@
+{% extends 'list_templates/base_list.html' %}
+
+{% block list_title %}Coldforming Stamp Material{% endblock %}
+
+{% block table_headers %}
+  <th>Stamp ID</th>
+  <th>Name</th>
+  <th>Friction Coefficient ({{field_units.friction_coefficient}})</th>
+  <th>Actions</th>
+{% endblock %}
+
+{% block table_body %}
+  {% for data in object_list %}
+    <tr>
+      <td>{{ data.id }}</td>
+      <td>{{ data.name }}</td>
+      <td>{{data.friction_coefficient}}</td>
+      <td>
+        <a href="{% url 'coldformingstamp_update' data.pk %}">Edit</a> | 
+        <a href="{% url 'coldformingstamp_delete' data.pk %}">Delete</a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}
+
+{% block additional_actions %}
+  <a href="{% url 'coldformingstamp_create' %}" class="btn btn-primary">Add New Stamp</a>
+{% endblock %}

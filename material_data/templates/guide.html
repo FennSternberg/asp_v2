@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style>
+    .custom-table {
+        margin: 50px auto;
+        border-collapse: collapse;
+    }
+
+    .custom-cell {
+        padding: 10px 30px;
+        border: 1px solid #dee2e6;  /* Using Bootstrap's default border color */
+        text-align: center;
+        vertical-align: middle; /* Centers content vertically */
+    }
+
+    .connector {
+        height: 10px;
+     
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'materialnavbar.html' %}
+<div class="container mt-5">
+    <h1 class="mb-4"> Database Guide </h1>
+    <div class="custom-table">
+        <div class="row">
+            <div class="col custom-cell">Layer Structure</div>
+        </div>
+        <div class="row">
+            <div class="col connector"></div>
+        </div>
+        <div class="row">
+            <div class="col custom-cell">Material</div>
+        </div>
+        <div class="row">
+            <div class="col connector"></div>
+        </div>
+        <div class="row">
+            <div class="col custom-cell">WVTR</div>
+            <div class="col custom-cell">OTR</div>
+            <div class="col custom-cell">Density</div>
+            <div class="col custom-cell">Youngs Modulus</div>
+            <div class="col custom-cell">Tensile Curve</div>
+            <div class="col custom-cell">Drucker Prager Curve</div>
+        </div>
+        <div class="row">
+            <div class="col connector"></div>
+            <div class="col connector"></div>
+            <div class="col connector"></div>
+            <div class="col connector"></div>
+            <div class="col connector"></div>
+            <div class="col connector"></div>
+        </div>
+        <div class="row">
+            <div class="col custom-cell">Thermoforming Cavity</div>
+            <div class="col custom-cell">Thermoforming Lid</div>
+            <div class="col custom-cell">Coldforming Cavity</div>
+        </div>
+   
+    </div>
+</div>
+{% endblock %}

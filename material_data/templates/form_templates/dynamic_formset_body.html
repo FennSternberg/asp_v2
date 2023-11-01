@@ -4,9 +4,10 @@
         <thead>
             <tr>
                 <th></th>
-                <th v-for="field in fields">[[ field.label ]]</th>
+                <th v-for="field in fields">[[ field.label ]] <span v-if="field.unit">([[field.unit]])</span>
+                </th>
                 <th></th>
-            </tr>
+            </tr> 
         </thead>
         <tbody>
             <tr v-for="(point, index) in points" v-show="!point.is_deleted">
@@ -14,7 +15,6 @@
                     <!-- Hidden input for id -->
                     <input type="hidden"  :name="`${formsetName}-${index}-id`" :id="`${formsetName}-${index}-id`" v-model="point.id">
                     <input type="hidden"  :name="`${formsetName}-${index}-DELETE`" :id="`${formsetName}-${index}-DELETE`" v-model="point.is_deleted">
-
                 </td>
                 <td v-for="field in fields">
                     <input :required="isFieldRequired(field, point)"  :type="field.type" :name="`${formsetName}-${index}-${field.field}`" :id="`${formsetName}-${index}-${field.field}`" class="form-control" :step="field.step" v-model="point[field.field]">
@@ -24,7 +24,6 @@
                 </td>
             </tr>
         </tbody>
-   
     </table>
     <button type="button" class="btn btn-secondary" @click="addPoint">Add More</button>
     <hr>

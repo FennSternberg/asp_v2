@@ -1,6 +1,6 @@
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
-from ..models import Material, WVTRData, ThermoformingData, DensityData, YoungsModulusData,  TensileCurveData, LayerStructure
+from ..models import ColdformingStamp, Material, WVTRData, OTRData,ColdformingData, ThermoformingData, ThermoformingLidData, DensityData, YoungsModulusData,  TensileCurveData, DruckerPragerCurveData, LayerStructure
 
 class DeleteViewMixin:
     template_name = 'confirm_delete.html'
@@ -19,8 +19,14 @@ class DeleteViewMixin:
 class MaterialDeleteView(DeleteViewMixin, DeleteView):
     model = Material
 
+class ColdformingStampDeleteView(DeleteViewMixin, DeleteView):
+    model = ColdformingStamp
+
 class WVTRDataDeleteView(DeleteViewMixin, DeleteView):
     model = WVTRData
+
+class OTRDataDeleteView(DeleteViewMixin, DeleteView):
+    model = OTRData
     
 class DensityDataDeleteView(DeleteViewMixin, DeleteView):
     model = DensityData
@@ -31,8 +37,17 @@ class YoungsModulusDataDeleteView(DeleteViewMixin, DeleteView):
 class TensileCurveDataDeleteView(DeleteViewMixin, DeleteView):
     model = TensileCurveData
 
+class DruckerPragerCurveDataDeleteView(DeleteViewMixin, DeleteView):
+    model = DruckerPragerCurveData
+
 class ThermoformingDataDeleteView(DeleteViewMixin, DeleteView):
     model = ThermoformingData
+
+class ColdformingDataDeleteView(DeleteViewMixin, DeleteView):
+    model = ColdformingData
+
+class ThermoformingLidDataDeleteView(DeleteViewMixin, DeleteView):
+    model = ThermoformingLidData
 
 class LayerStructureDeleteView(DeleteViewMixin, DeleteView):
     model = LayerStructure

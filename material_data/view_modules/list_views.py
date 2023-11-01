@@ -1,5 +1,5 @@
 from django.views.generic import ListView
-from ..models import LayerStructure, MaterialOrder, Material, WVTRData, ThermoformingData, DensityData, YoungsModulusData,  TensileCurveData, TensileCurvePoint
+from ..models import LayerStructure,ColdformingStamp, MaterialOrder, Material,OTRData, WVTRData,ColdformingData, ThermoformingData,ThermoformingLidData, DensityData, YoungsModulusData,  TensileCurveData, TensileCurvePoint, DruckerPragerCurveData, DruckerPragerCurvePoint
 from django.db.models import Q
 from django.db.models import Prefetch
 
@@ -46,7 +46,7 @@ class LayerStructureListView(ListView):
         materials_ordered = MaterialOrder.objects.filter(
             layer_structure__in=queryset
         ).order_by('order')
-
+        print( materials_ordered) 
         queryset = queryset.prefetch_related(
             Prefetch('materialorder_set', queryset=materials_ordered, to_attr='ordered_materials')
         )
@@ -61,6 +61,7 @@ class ThermoformingDataListView(SearchMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset().prefetch_related(
             'wvtr_data',
+            'otr_data',
             'density_data',
             'youngs_modulus_data',
             'tensile_curve_data',
@@ -68,11 +69,46 @@ class ThermoformingDataListView(SearchMixin, ListView):
 
         for data in queryset:
             data.wvtr_count = data.wvtr_data.count()
+            data.otr_count = data.otr_data.count()
             data.density_count = data.density_data.count()
             data.YM_CD_count = data.youngs_modulus_data.filter(direction='CD').count()
             data.YM_MD_count = data.youngs_modulus_data.filter(direction='MD').count()
             data.tensile_CD_count = data.tensile_curve_data.filter(direction='CD').count()
             data.tensile_MD_count = data.tensile_curve_data.filter(direction='MD').count()
+        return queryset
+
+class ColdformingDataListView(SearchMixin, ListView):
+    model = ColdformingData
+    template_name = 'list_templates/coldformingdata_list.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().prefetch_related(
+            'youngs_modulus_data',
+            'tensile_curve_data',
+            'drucker_prager_curve_data'
+        )
+
+        for data in queryset:
+            data.YM_CD_count = data.youngs_modulus_data.filter(direction='CD').count()
+            data.YM_MD_count = data.youngs_modulus_data.filter(direction='MD').count()
+            data.tensile_CD_count = data.tensile_curve_data.filter(direction='CD').count()
+            data.tensile_MD_count = data.tensile_curve_data.filter(direction='MD').count()
+            data.drucker_prager_CD_count = data.drucker_prager_curve_data.filter(direction='CD').count()
+            data.drucker_prager_MD_count = data.drucker_prager_curve_data.filter(direction='MD').count()
+        return queryset
+
+class ThermoformingLidDataListView(SearchMixin, ListView):
+    model = ThermoformingLidData
+    template_name = 'list_templates/thermoformingliddata_list.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().prefetch_related(
+            'wvtr_data',
+            'otr_data',
+        )
+        for data in queryset:
+            data.wvtr_count = data.wvtr_data.count()
+            data.otr_count = data.otr_data.count()
         return queryset
     
 class MaterialListView(FieldUnitsMixin,ListView):
@@ -81,17 +117,31 @@ class MaterialListView(FieldUnitsMixin,ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('search')
-        
         if query:
             queryset = queryset.filter(
                 Q(name__icontains=query) 
             ).distinct()
 
         return queryset
+class ColdformingStampListView(FieldUnitsMixin,ListView):
+    model = ColdformingStamp
+    template_name = 'list_templates/coldformingstamp_list.html'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('search')
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) 
+            ).distinct()
+        return queryset
     
 class WVTRDataListView(FieldUnitsMixin, SearchMixin, ListView):
     model = WVTRData
     template_name = 'list_templates/wvtrdata_list.html'
+
+class OTRDataListView(FieldUnitsMixin, SearchMixin, ListView):
+    model = OTRData
+    template_name = 'list_templates/otrdata_list.html'
  
     
 class TensileCurveDataListView(FieldUnitsMixin, SearchMixin,ListView):
@@ -101,6 +151,15 @@ class TensileCurveDataListView(FieldUnitsMixin, SearchMixin,ListView):
         queryset = super().get_queryset()
         for data in queryset:
             data.point_count = TensileCurvePoint.objects.filter(tensile_curve_id=data.id).count()
+        return queryset
+    
+class DruckerPragerCurveDataListView(FieldUnitsMixin, SearchMixin,ListView):
+    model = DruckerPragerCurveData
+    template_name = 'list_templates/druckerpragercurvedata_list.html'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        for data in queryset:
+            data.point_count = DruckerPragerCurvePoint.objects.filter(drucker_prager_curve_id=data.id).count()
         return queryset
 
 class DensityDataListView(FieldUnitsMixin, SearchMixin,ListView):

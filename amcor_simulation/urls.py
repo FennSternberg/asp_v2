@@ -17,9 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 urlpatterns = [
-    path('', include('homepage.urls')),
+    path('ASP/', include('homepage.urls')),
     path('', include('users.urls')),
     path('admin/', admin.site.urls),
-    path('',include('forms.urls')),
-    path('material_data/', include('material_data.urls')),  
+    path('ASP/',include('forms.urls')),
+    path('ASP/material_data/', include('material_data.urls')),  
 ]

@@ -29,6 +29,9 @@
         <li class="nav-item">
           <a class="nav-link" href="">My Jobs</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'material_list' %}">Material Database</a>
+        </li>
         {% if user.userprofile.usergroup in "admin,manager" %}
         <li class="nav-item">
           <a class="nav-link" href="">All Jobs</a>

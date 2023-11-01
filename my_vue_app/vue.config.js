@@ -16,6 +16,7 @@ module.exports = defineConfig({
   outputDir: "../static/bundles/",
   transpileDependencies: true,
   pages: {
-    verificationVue: "src/main.js", //
+    verificationVue: "src/main.js",
+    layerStructureFormVue: "src/layerStructure.js",
   },
 });

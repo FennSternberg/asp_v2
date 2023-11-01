@@ -3,16 +3,16 @@ from django.urls import reverse_lazy
 from django.forms.models import model_to_dict
 import json
 from django.http import HttpResponse
-from ..models import LayerStructure, MaterialOrder, Material, WVTRData, ThermoformingData, DensityData, YoungsModulusData,  TensileCurveData, TensileCurvePoint
-from ..forms import CreateLayerStructureForm, CreateMaterialForm, UpdateMaterialForm, CreateWVTRDataForm, UpdateWVTRDataForm, ThermoformingDataForm, CreateDensityDataForm, UpdateDensityDataForm, CreateYoungsModulusDataForm, UpdateYoungsModulusDataForm, CreateTensileCurveDataForm, UpdateTensileCurveDataForm,  ThermoformingDataUpdateForm
+from ..models import LayerStructure,ColdformingStamp, MaterialOrder, Material, OTRData, WVTRData, ColdformingData, ThermoformingLidData, ThermoformingData, DensityData, YoungsModulusData, DruckerPragerCurveData, DruckerPragerCurvePoint,  TensileCurveData, TensileCurvePoint
+from ..forms import CreateColdformingStampForm, UpdateColdformingStampForm, CreateLayerStructureForm, CreateMaterialForm, UpdateMaterialForm,CreateOTRDataForm, UpdateOTRDataForm, CreateWVTRDataForm, UpdateWVTRDataForm, ThermoformingDataForm,ThermoformingLidDataForm, ColdformingDataForm, CreateDensityDataForm, UpdateDensityDataForm, CreateYoungsModulusDataForm, UpdateYoungsModulusDataForm,CreateDruckerPragerCurveDataForm, UpdateDruckerPragerCurveDataForm, CreateTensileCurveDataForm, UpdateTensileCurveDataForm,  ThermoformingDataUpdateForm, ThermoformingLidDataUpdateForm, ColdformingDataUpdateForm
 from django.forms import inlineformset_factory
 from django import forms
 
 class LayerStructureCreateView(CreateView):
     model = LayerStructure
-    form_class = CreateLayerStructureForm
-    template_name = 'form_templates/createlayerstructure.html'
-    success_url = reverse_lazy('layer_structure_list')
+    form_class = CreateLayerStructureForm 
+    template_name = 'form_templates/layerstructure_form.html'
+    success_url = reverse_lazy('layerstructure_list')
     extra_context = {'form_title': 'Create Layer Structure'}
 
     def form_valid(self, form): 
@@ -30,13 +30,43 @@ class LayerStructureCreateView(CreateView):
         print("form_invalid()")
         print("Form errors:", form.errors)
         return super().form_invalid(form)
-    
+     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         materials = Material.objects.all().values('id', 'name')
         context['all_materials_json'] = json.dumps(list(materials))
         print(context['all_materials_json'] )
         return context
+
+
+class LayerStructureUpdateView(UpdateView):
+    model = LayerStructure
+    form_class = CreateLayerStructureForm
+    template_name = 'form_templates/layerstructure_form.html'
+    success_url = reverse_lazy('layerstructure_list')
+    extra_context = {'form_title': 'Update Layer Structure'}
+
+    def form_valid(self, form):
+        print("form_valid()")
+        form.instance.name = self.request.POST.get('name')
+        response = super().form_valid(form)
+        self.object.materialorder_set.all().delete()  # Deleting old material orders
+        ordered_material_ids = self.request.POST.get('ordered_material_ids', '').split(',')
+        for order, material_id in enumerate(ordered_material_ids):
+            material = Material.objects.get(id=material_id)
+            MaterialOrder.objects.create(material=material, layer_structure=self.object, order=order)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        materials = Material.objects.all().values('id', 'name')
+        context['all_materials_json'] = json.dumps(list(materials))
+        context['selected_materials_json'] = json.dumps(
+            list(self.object.materialorder_set.all().values_list('material_id', flat=True))
+        )
+        
+        return context
+
 
 class MaterialCreateView(CreateView):
     model = Material
@@ -56,6 +86,28 @@ class MaterialUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['form_title'] = 'Update Material'
         context['display_context'] = {"material": self.object.name, "material id": self.object.id}
+  
+        return context
+
+class ColdformingStampCreateView(CreateView):
+    model = ColdformingStamp
+    form_class = CreateColdformingStampForm
+    template_name = 'form_templates/form_template.html' 
+    success_url = reverse_lazy('coldformingstamp_list')
+    extra_context = {'form_title': 'Create Coldforming Stamp'}
+    
+
+class ColdformingStampUpdateView(UpdateView):
+    model = ColdformingStamp
+    form_class = UpdateColdformingStampForm
+    template_name = 'form_templates/form_template.html'
+    success_url = reverse_lazy('coldformingstamp_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Update Coldforming Stamp'
+        context['display_context'] = {"material": self.object.name, "material id": self.object.id}
+  
         return context
 
 class WVTRDataFormMixin:
@@ -79,6 +131,29 @@ class WVTRDataUpdateView(WVTRDataFormMixin, UpdateView):
             "material": self.object.material,
     
             "wvtr id": self.object.id
+        }
+        return context
+
+class OTRDataFormMixin:
+    success_url = reverse_lazy('otrdata_list')
+
+class OTRDataCreateView(OTRDataFormMixin, CreateView):
+    model = OTRData
+    form_class = CreateOTRDataForm
+    template_name = 'form_templates/form_template.html'
+    extra_context = {'form_title': 'Create OTR Data'}
+
+class OTRDataUpdateView(OTRDataFormMixin, UpdateView):
+    model = OTRData
+    form_class = UpdateOTRDataForm
+    template_name = 'form_templates/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Update OTR Data'
+        context['display_context'] = {
+            "material": self.object.material,
+            "otr id": self.object.id
         }
         return context
 
@@ -155,7 +230,7 @@ class TensileCurveDataFormMixin:
         
         if formset.is_valid():
             formset.save()
-        else:
+        else: 
             print("Formset is not valid")
             print(formset.errors)
 
@@ -193,15 +268,17 @@ class TensileCurveDataCreateView(TensileCurveDataFormMixin, CreateView):
                 'field':'stress',
                 'label':'Stress',
                 'type':'number',
-                'required': "true",
-                'step':'any'
+                'required': 'true',
+                'step':'any',
+                'unit':TensileCurvePoint().units('stress')
              }, 
             {
                 'field':'strain',
                 'label':'Strain',
                 'type':'number',
-                'required': "true",
-                'step':'any'
+                'required': 'true',
+                'step':'any',
+                'unit':TensileCurvePoint().units('strain')
             }
             ]
         # Generate initial data for the formset dynamically
@@ -243,14 +320,16 @@ class TensileCurveDataUpdateView(TensileCurveDataFormMixin, UpdateView):
                 'label':'Stress',
                 'type':'number',
                 'required': "true",
-                'step':'any'
+                'step':'any',
+                'unit':TensileCurvePoint().units('stress')
              }, 
             {
                 'field':'strain',
                 'label':'Strain',
                 'type':'number',
                 'required': "true",
-                'step':'any'
+                'step':'any',
+                'unit':TensileCurvePoint().units('strain')
             }
             ]
         # Generate initial data for the formset dynamically
@@ -269,7 +348,152 @@ class TensileCurveDataUpdateView(TensileCurveDataFormMixin, UpdateView):
             "tensile id": self.object.id
         }
         return context
-    
+# DP
+
+class DruckerPragerCurveDataFormMixin:
+    success_url = reverse_lazy('druckerpragercurvedata_list')
+
+    def form_valid(self, form):
+        # Capture the response from the parent class's form_valid method
+        response = super().form_valid(form)
+        DruckerPragerCurvePointFormSet = inlineformset_factory(
+           DruckerPragerCurveData,
+           DruckerPragerCurvePoint,
+            fields=('stress', 'strain'),
+            widgets={
+                'stress': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+                'strain': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'})
+            },
+            extra=0,
+            can_delete=True
+        )  
+        # Save the main object
+        self.object.save()
+
+        # Handling the formset
+        print(self.request.POST)
+        formset = DruckerPragerCurvePointFormSet(self.request.POST, instance=self.object)
+        
+        if formset.is_valid():
+            formset.save()
+        else: 
+            print("Formset is not valid")
+            print(formset.errors)
+
+            return HttpResponse("Error: Formset is not valid.")
+        return response
+
+class DruckerPragerCurveDataCreateView(DruckerPragerCurveDataFormMixin, CreateView):
+    model = DruckerPragerCurveData
+    form_class = CreateDruckerPragerCurveDataForm
+
+    template_name = 'form_templates/form_template.html'
+    extra_context = {'form_title': 'Create Drucker Prager Curve Data'}
+
+    def get_context_data(self, **kwargs):
+        DruckerPragerCurvePointFormSet = inlineformset_factory(
+            DruckerPragerCurveData,
+            DruckerPragerCurvePoint,
+            fields=('stress', 'strain'),
+            widgets={
+                'stress': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+                'strain': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'})
+            },
+            extra=3,
+            can_delete=True
+        ) 
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = DruckerPragerCurvePointFormSet(self.request.POST)
+        else:
+            context['formset'] = DruckerPragerCurvePointFormSet()
+     
+        context['formset_name'] = 'druckerpragercurvepoint_set'
+        context['formset_fields'] = [
+            {
+                'field':'stress',
+                'label':'Stress',
+                'type':'number',
+                'required': 'true',
+                'step':'any',
+                'unit':DruckerPragerCurvePoint().units('stress')
+             }, 
+            {
+                'field':'strain',
+                'label':'Strain',
+                'type':'number',
+                'required': 'true',
+                'step':'any',
+                'unit':DruckerPragerCurvePoint().units('strain')
+            }
+            ]
+        # Generate initial data for the formset dynamically
+        initial_data = []
+        for form in context['formset']:
+            # model_to_dict takes a model instance and returns a dictionary with model's field values
+            form_initial = model_to_dict(form.instance)
+            initial_data.append(form_initial)
+        context['formset_initial'] = json.dumps(initial_data)
+        context['upload_excel_flag'] = True
+        return context
+
+class DruckerPragerCurveDataUpdateView(DruckerPragerCurveDataFormMixin, UpdateView):
+    model = DruckerPragerCurveData
+    form_class = UpdateDruckerPragerCurveDataForm
+    template_name = 'form_templates/form_template.html'
+    def get_context_data(self, **kwargs):
+        DruckerPragerCurvePointFormSet = inlineformset_factory(
+            DruckerPragerCurveData,
+            DruckerPragerCurvePoint,
+            fields=('stress', 'strain'),
+            widgets={
+                'stress': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'}),
+                'strain': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any'})
+            },
+            extra=0,
+            can_delete=True
+        )  
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Update Drucker Prager Curve Data'
+        if self.request.POST:
+            context['formset'] = DruckerPragerCurvePointFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = DruckerPragerCurvePointFormSet(instance=self.object)
+        context['formset_name'] = 'druckerpragercurvepoint_set'
+        context['formset_fields'] = [
+            {
+                'field':'stress',
+                'label':'Stress',
+                'type':'number',
+                'required': "true",
+                'step':'any',
+                'unit':DruckerPragerCurvePoint().units('stress')
+             }, 
+            {
+                'field':'strain',
+                'label':'Strain',
+                'type':'number',
+                'required': "true",
+                'step':'any',
+                'unit':DruckerPragerCurvePoint().units('strain')
+            }
+            ]
+        # Generate initial data for the formset dynamically
+        initial_data = []
+        for form in context['formset']:
+            # model_to_dict takes a model instance and returns a dictionary with model's field values
+            form_initial = model_to_dict(form.instance)
+            form_initial["is_deleted"] = False
+            initial_data.append(form_initial)
+
+
+        context['formset_initial'] = json.dumps(initial_data)
+        print(context['formset_initial'])
+        context['display_context'] = {
+            "material": self.object.material,
+            "drucker prager id": self.object.id
+        }
+        return context
 
 class ThermoformingDataCreateView(CreateView):
     model = ThermoformingData
@@ -291,6 +515,7 @@ class ThermoformingDataUpdateView(UpdateView):
 
         # Update many-to-many fields
         self.object.wvtr_data.set(form.cleaned_data['wvtr_data'])
+        self.object.otr_data.set(form.cleaned_data['otr_data'])
         self.object.density_data.set(form.cleaned_data['density_data'])
         self.object.youngs_modulus_data.set(form.cleaned_data['youngs_modulus_data'])
         self.object.tensile_curve_data.set(form.cleaned_data['tensile_curve_data'])
@@ -302,5 +527,72 @@ class ThermoformingDataUpdateView(UpdateView):
         context['display_context'] = {
             "material": self.object.material,
             "thermoforming id": self.object.id
+        }
+        return context
+# coldforming
+
+class ColdformingDataCreateView(CreateView):
+    model = ColdformingData
+    form_class = ColdformingDataForm
+    template_name = 'form_templates/form_template.html' 
+    success_url = reverse_lazy('coldformingdata_list')
+    extra_context = {'form_title': 'Create Coldforming Material'}
+
+class ColdformingDataUpdateView(UpdateView):
+    model = ColdformingData
+    form_class = ColdformingDataUpdateForm
+    template_name = 'form_templates/form_template.html'
+    success_url = reverse_lazy('coldformingdata_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        # Call custom save to perform validations
+        self.object.save()
+
+        # Update many-to-many fields
+        self.object.youngs_modulus_data.set(form.cleaned_data['youngs_modulus_data'])
+        self.object.tensile_curve_data.set(form.cleaned_data['tensile_curve_data'])
+        self.object.drucker_prager_curve_data.set(form.cleaned_data['drucker_prager_curve_data'])
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Update Linked Coldforming Data'
+        context['display_context'] = {
+            "material": self.object.material,
+            "coldforming id": self.object.id
+        }
+        return context
+    
+
+class ThermoformingLidDataCreateView(CreateView):
+    model = ThermoformingLidData
+    form_class = ThermoformingLidDataForm
+    template_name = 'form_templates/form_template.html' 
+    success_url = reverse_lazy('thermoformingliddata_list')
+    extra_context = {'form_title': 'Create Thermoforming Lid Material'}
+
+class ThermoformingLidDataUpdateView(UpdateView):
+    model = ThermoformingLidData
+    form_class = ThermoformingLidDataUpdateForm
+    template_name = 'form_templates/form_template.html'
+    success_url = reverse_lazy('thermoformingliddata_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        # Call custom save to perform validations
+        self.object.save()
+
+        # Update many-to-many fields
+        self.object.wvtr_data.set(form.cleaned_data['wvtr_data'])
+        self.object.otr_data.set(form.cleaned_data['otr_data'])
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Update Linked Thermoforming Lid Data'
+        context['display_context'] = {
+            "material": self.object.material,
+            "thermoforming lid id": self.object.id
         }
         return context

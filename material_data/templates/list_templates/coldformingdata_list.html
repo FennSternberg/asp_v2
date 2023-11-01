@@ -1,18 +1,17 @@
 {% extends 'list_templates/base_list.html' %}
 
-{% block list_title %}Thermoforming Material Data{% endblock %}
+{% block list_title %}Coldforming Material Data{% endblock %}
 
 {% block table_headers %}
-    <th>Thermoform Data ID</th>
+    <th>Coldform Data ID</th>
     <th>Material ID</th>
     <th>Material Name</th>
-    <th># WVTR</th>
-    <th># OTR</th>
-    <th># Density</th>
     <th># YM CD</th>
     <th># YM MD</th>
     <th># Tensile CD</th>
     <th># Tensile MD</th>
+    <th># Drucker Prager CD</th>
+    <th># Drucker Prager MD</th>
     <th>Actions</th>
 {% endblock %} 
 
@@ -22,22 +21,21 @@
         <td>{{ data.id }}</td>
         <td>{{ data.material.id }}</td>
         <td>{{ data.material.name }}</td>
-        <td>{{ data.wvtr_count }}</td>
-        <td>{{ data.otr_count }}</td>
-        <td>{{ data.density_count }}</td> 
         <td>{{ data.YM_CD_count }}</td> 
         <td>{{ data.YM_MD_count }}</td> 
         <td>{{ data.tensile_CD_count }}</td> 
-        <td>{{ data.tensile_MD_count }}</td> 
+        <td>{{ data.tensile_MD_count }}</td>
+        <td>{{ data.drucker_prager_CD_count }}</td> 
+        <td>{{ data.drucker_prager_MD_count }}</td> 
         <td>
-            <a href="{% url 'thermoformingdata_delete' data.pk %}">Delete</a> |
-            <a href="{% url 'thermoformingdata_update' data.pk %}">Edit</a> |
-            <a href="{% url 'thermoformingdata_detail' data.pk %}">Summary</a>
+            <a href="{% url 'coldformingdata_delete' data.pk %}">Delete</a> |
+            <a href="{% url 'coldformingdata_update' data.pk %}">Edit</a> |
+            <a href="{% url 'coldformingdata_detail' data.pk %}">Summary</a>
         </td>
     </tr> 
     {% endfor %}
 {% endblock %}
 
 {% block additional_actions %}
-    <a href="{% url 'thermoformingdata_create' %}" class="btn btn-primary">Add New Data</a>
+    <a href="{% url 'coldformingdata_create' %}" class="btn btn-primary">Add New Data</a>
 {% endblock %}

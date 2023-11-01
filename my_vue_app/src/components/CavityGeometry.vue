@@ -238,7 +238,7 @@ export default {
       };
       console.log("Validate");
       console.log(postData);
-      this.validateForm("/validate_cavity_geometry/", postData);
+      this.validateForm("/ASP/validate_cavity_geometry/", postData);
     },
     updateLongFromShort() {
       const calculatedC1 = this.calcLongFromShort(

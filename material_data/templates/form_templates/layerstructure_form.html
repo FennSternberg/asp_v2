@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.prod.js"></script>
+{% endblock %}
+{% block content %}{% load static %}
+{% load render_bundle from webpack_loader %}
+<script  type="text/javascript">
+    window.all_materials_json = `{{ all_materials_json|safe }}`;
+    window.selected_materials_json = `{{ selected_materials_json|safe }}`;
+</script>
+{% include 'materialnavbar.html' %}
+
+<div class="container mt-5" >
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <h1 class="mb-4">{{ form_title }}</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="layerstructureName" class="form-label">Structure Name:</label>
+                    {{ form.name }} 
+                </div>
+                <h3>Layers</h3>
+                <div id="layerStructureFormVue">
+  
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.released_for_coldforming.id_for_label }}" class="form-label">Released for Coldforming:</label>
+                    <input type="checkbox" id="{{ form.released_for_coldforming.id_for_label }}" name="{{ form.released_for_coldforming.name }}" class="form-check-input" {% if form.released_for_coldforming.value %}checked{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.released_for_thermoforming.id_for_label }}" class="form-label">Released for Thermoforming:</label>
+                    <input type="checkbox" id="{{ form.released_for_thermoforming.id_for_label }}" name="{{ form.released_for_thermoforming.name }}" class="form-check-input" {% if form.released_for_thermoforming.value %}checked{% endif %}>
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.released_for_thermoforming_lid.id_for_label }}" class="form-label">Released for Thermoforming Lid:</label>
+                    <input type="checkbox" id="{{ form.released_for_thermoforming_lid.id_for_label }}" name="{{ form.released_for_thermoforming_lid.name }}" class="form-check-input" {% if form.released_for_thermoforming_lid.value %}checked{% endif %}>
+                </div>
+           
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% render_bundle 'chunk-vendors' %} {% render_bundle 'layerStructureFormVue' %}
+{% endblock %}

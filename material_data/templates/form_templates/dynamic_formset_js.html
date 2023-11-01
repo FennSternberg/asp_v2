@@ -10,7 +10,7 @@
                 points:  {{ formset_initial | safe }}
 
             };
-        },
+        }, 
         methods: {
             parseExcelFile() {
                 const fileInput = document.getElementById('excelFile');
@@ -58,8 +58,7 @@
             removePoint(index) { 
                 this.points[index].is_deleted = true; 
                 this.updateTotalForms();
-            }
-            
+            } 
         },
         mounted() {
             console.log(this.points)

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <label :for="fieldId" class="form-label">{{ fieldLabel }} </label>
+    <label :for="fieldId" v-if="fieldLabel" class="form-label"
+      >{{ fieldLabel }}
+    </label>
 
     <!-- Text Type -->
     <input

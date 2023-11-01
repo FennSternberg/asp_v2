@@ -68,7 +68,7 @@ export default {
         shape: this.selectedShape,
         profile: this.selectedProfile,
       };
-      this.validateForm("/validate_shape_and_profile/", postData);
+      this.validateForm("/ASP/validate_shape_and_profile/", postData);
     },
   },
 };

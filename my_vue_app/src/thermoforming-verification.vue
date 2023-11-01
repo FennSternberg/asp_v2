@@ -95,7 +95,7 @@ import ProgressBar from "./components/ProgressBar.vue";
 import CavityGeometry from "./components/CavityGeometry.vue";
 
 export default {
-  components: {
+  components: { 
     ProgressBar,
     AnalysisDetails,
     ShapeAndProfile,
