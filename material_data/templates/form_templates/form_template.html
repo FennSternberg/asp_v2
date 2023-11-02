@@ -10,6 +10,8 @@
     window.formset_fields = {{ formset_fields | safe }};
     window.formsetName =  "{{ formset_name }}";
     window.points = {{ formset_initial | safe }}
+    window.upload_excel_flag = {{ upload_excel_flag|yesno:"true,false" }};
+
 </script>
 {% include 'materialnavbar.html' %}
 

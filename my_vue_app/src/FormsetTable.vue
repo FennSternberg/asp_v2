@@ -1,5 +1,8 @@
 <template>
+
+
   <div class="mb-3">
+
     <div v-if="uploadExcelFlag" class="row align-items-center mb-3">
       <div class="col-8">
         <input
@@ -89,9 +92,8 @@
 export default {
   data() {
     return {
-      uploadExcelFlag: true,
-      totalForms: 0, // Initialize as 0, we'll update it
-      // You can populate these fields from the backend or props
+      uploadExcelFlag: window.upload_excel_flag,
+      totalForms: 0, 
       fields: window.formset_fields,
       formsetName: window.formsetName,
       points: window.points,

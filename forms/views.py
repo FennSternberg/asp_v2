@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import AnalysisDetailSerializer, ShapeAndProfileSerializer, CavityGeometrySerializer
 
-def app1(request):
+def Thermoforming(request):
     internal_contact_choices = [
         {"value": user.id, "label": str(user)}
         for user in User.objects.all()
