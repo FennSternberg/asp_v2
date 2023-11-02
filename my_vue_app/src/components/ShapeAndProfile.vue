@@ -1,36 +1,38 @@
 <template>
-  <div>
-    <h1>Shape and Profile</h1>
-    <div class="text-center">
-      <BaseRadioGroup
-        fieldId="shape"
-        :fieldChoices="shapeChoices"
-        :fieldValue="selectedShape"
-        :fieldLabel="'Shape'"
-        :errors="errors.shape"
-        :useImage="true"
-        @input="
-          $store.commit('form/updateField', {
-            field: 'selectedShape',
-            value: $event,
-          })
-        "
-      />
+  <div class="form-page">
+    <div class="col-lg-10 mx-auto">
+      <h1>Shape and Profile</h1>
+      <div class="text-center">
+        <BaseRadioGroup
+          fieldId="shape"
+          :fieldChoices="shapeChoices"
+          :fieldValue="selectedShape"
+          :fieldLabel="'Shape'"
+          :errors="errors.shape"
+          :useImage="true"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'selectedShape',
+              value: $event,
+            })
+          "
+        />
 
-      <BaseRadioGroup
-        fieldId="profile"
-        :fieldLabel="'Profile'"
-        :fieldChoices="profileChoices"
-        :fieldValue="selectedProfile"
-        :errors="errors.profile"
-        :useImage="true"
-        @input="
-          $store.commit('form/updateField', {
-            field: 'selectedProfile',
-            value: $event,
-          })
-        "
-      />
+        <BaseRadioGroup
+          fieldId="profile"
+          :fieldLabel="'Profile'"
+          :fieldChoices="profileChoices"
+          :fieldValue="selectedProfile"
+          :errors="errors.profile"
+          :useImage="true"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'selectedProfile',
+              value: $event,
+            })
+          "
+        />
+      </div>
     </div>
   </div>
 </template>

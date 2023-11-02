@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import AnalysisDetail, ThermoformingCavityParameters
+from material_data.models import LayerStructure
 from .geometry_check import valid_profile1, valid_profile2, valid_profile3, calc_R, calc_R2 as calc_Rf
 
 def custom_is_input(required_fields, data):
@@ -8,11 +9,51 @@ def custom_is_input(required_fields, data):
                 raise serializers.ValidationError({field: "This field is required"})
     
 class AnalysisDetailSerializer(serializers.ModelSerializer):
-  
-
     class Meta:
         model = AnalysisDetail
         fields = ['jobname', 'customer', 'internal_contact']
+
+class MaterialDetailSerializer(serializers.Serializer):
+    cavity_materials = serializers.ListField(
+        child=serializers.IntegerField(), 
+        required=True
+    )
+    lid_materials = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=True
+    )
+
+    def validate_cavity_materials(self, cavity_materials):
+        if not cavity_materials:
+            raise serializers.ValidationError(
+                        f"You must select at least one material"
+                    )
+        for cavity_material_id in cavity_materials:
+            try:
+                material = LayerStructure.objects.get(id=cavity_material_id)
+                if not material.is_available_for_thermoforming():
+                    raise serializers.ValidationError(
+                        f'Material with ID {cavity_material_id} is not available for thermoforming.'
+                    )
+            except LayerStructure.DoesNotExist:
+                raise serializers.ValidationError(
+                    f'Material with ID {cavity_material_id} does not exist.'
+                )
+        return cavity_materials
+
+    def validate_lid_materials(self, lid_materials):
+        for lid_material_id in lid_materials:
+            try:
+                material = LayerStructure.objects.get(id=lid_material_id)
+                if not material.is_available_for_thermoforming_lid():
+                    raise serializers.ValidationError(
+                        f'Material with ID {lid_material_id} is not available for thermoforming lid.'
+                    )
+            except LayerStructure.DoesNotExist:
+                raise serializers.ValidationError(
+                    f'Material with ID {lid_material_id} does not exist.'
+                )
+        return lid_materials
 
 class CavityGeometrySerializer(serializers.ModelSerializer):
     c1 = serializers.FloatField(required=False)

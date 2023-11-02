@@ -1,5 +1,3 @@
-// src/store/modules/form.js
-
 export default {
   namespaced: true,
   state: {
@@ -12,5 +10,4 @@ export default {
       state[payload.field] = payload.value;
     },
   },
-  // ... potentially some actions or getters
 };

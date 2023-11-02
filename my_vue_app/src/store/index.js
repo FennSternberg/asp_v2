@@ -1,8 +1,8 @@
 import { createStore } from "vuex";
-import form from "./modules/form"; // Import the form module
+import form from "./modules/form";
 
 export default createStore({
   modules: {
-    form, // Include the form module
+    form,
   },
 });

@@ -1,47 +1,49 @@
 <template>
-  <div>
-    <h1>Analysis Details</h1>
-    <BaseFormField
-      fieldId="id_internal_contact"
-      fieldLabel="Internal Contact"
-      fieldType="vue3-select"
-      :fieldValue="internal_contact"
-      :fieldChoices="internalContactChoices"
-      :errors="errors.internal_contact"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'internal_contact',
-          value: $event,
-        })
-      "
-    />
-    <BaseFormField
-      fieldId="id_jobname"
-      fieldLabel="Job Name"
-      fieldType="text"
-      :fieldValue="jobname"
-      :errors="errors.jobname"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'jobname',
-          value: $event.target.value,
-        })
-      "
-    />
+  <div class="form-page">
+    <div class="col-lg-6 mx-auto">
+      <h1>Analysis Details</h1>
+      <BaseFormField
+        fieldId="id_internal_contact"
+        fieldLabel="Internal Contact"
+        fieldType="vue3-select"
+        :fieldValue="internal_contact"
+        :fieldChoices="internalContactChoices"
+        :errors="errors.internal_contact"
+        @input="
+          $store.commit('form/updateField', {
+            field: 'internal_contact',
+            value: $event,
+          })
+        "
+      />
+      <BaseFormField
+        fieldId="id_jobname"
+        fieldLabel="Job Name"
+        fieldType="text"
+        :fieldValue="jobname"
+        :errors="errors.jobname"
+        @input="
+          $store.commit('form/updateField', {
+            field: 'jobname',
+            value: $event.target.value,
+          })
+        "
+      />
 
-    <BaseFormField
-      fieldId="id_customer"
-      fieldLabel="Customer"
-      fieldType="text"
-      :fieldValue="customer"
-      :errors="errors.customer"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'customer',
-          value: $event.target.value,
-        })
-      "
-    />
+      <BaseFormField
+        fieldId="id_customer"
+        fieldLabel="Customer"
+        fieldType="text"
+        :fieldValue="customer"
+        :errors="errors.customer"
+        @input="
+          $store.commit('form/updateField', {
+            field: 'customer',
+            value: $event.target.value,
+          })
+        "
+      />
+    </div>
   </div>
 </template>
 
@@ -69,8 +71,8 @@ export default {
   },
   props: {
     internalContactChoices: Array,
-    currentUserId: [String, Number, null], 
-    errors: Object, 
+    currentUserId: [String, Number, null],
+    errors: Object,
   },
   methods: {
     validateThisForm() {
@@ -85,6 +87,4 @@ export default {
 };
 </script>
 
-<style scoped>
-/* You may need to adjust depending on your setup */
-</style>
+<style scoped></style>

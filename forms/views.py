@@ -3,10 +3,11 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from .geometry_check import calc_R, calc_R2 as calc_Rf
 from django.contrib.auth.models import User
+from material_data.models import LayerStructure
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import AnalysisDetailSerializer, ShapeAndProfileSerializer, CavityGeometrySerializer
+from .serializers import AnalysisDetailSerializer, ShapeAndProfileSerializer, CavityGeometrySerializer, MaterialDetailSerializer
 
 def Thermoforming(request):
     internal_contact_choices = [
@@ -14,16 +15,42 @@ def Thermoforming(request):
         for user in User.objects.all()
     ]
 
+    available_materials = [
+        {"value":layer_structure.id, "label":str(layer_structure)}
+        for layer_structure in LayerStructure.objects.all()
+        if layer_structure.is_available_for_thermoforming()
+    ]
+
+    available_lids = [
+        {"value":layer_structure.id, "label":str(layer_structure)}
+        for layer_structure in LayerStructure.objects.all()
+        if layer_structure.is_available_for_thermoforming_lid()
+    ]
+
     context = {
         "internal_contact_choices": internal_contact_choices,
-        "current_user_id": request.user.id if request.user.is_authenticated else None
+        "current_user_id": request.user.id if request.user.is_authenticated else None,
+        "available_materials": available_materials,
+        "available_lids": available_lids
     }
     return render(request, 'thermoforming_verification.html', context)
 
-class ValidateAnalysisDetails(APIView ):
+class ValidateAnalysisDetails(APIView):
     def post(self, request):
         print(f"Received data: {request.data}")
         serializer = AnalysisDetailSerializer(data=request.data)
+        if serializer.is_valid():
+            print('Serializer is valid')
+            return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        else:
+            print('Serializer is not valid')
+            print(f"Serializer errors: {serializer.errors}")
+            return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_200_OK)
+
+class ValidateMaterialDetails(APIView):
+    def post(self, request):
+        print(f"Received data: {request.data}")
+        serializer = MaterialDetailSerializer(data=request.data)
         if serializer.is_valid():
             print('Serializer is valid')
             return Response({'status': 'success'}, status=status.HTTP_200_OK)

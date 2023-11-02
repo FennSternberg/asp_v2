@@ -1,152 +1,160 @@
 <template>
-  <div>
+  <div class="form-page">
     <h1>Cavity Geometry</h1>
+    <div class="row">
+      <div class="col-lg-6">
+        <BaseFormField
+          fieldId="id_depth"
+          fieldLabel="Depth"
+          fieldType="number"
+          :fieldValue="depth"
+          :errors="errors.depth"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'depth',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_depth"
-      fieldLabel="Depth"
-      fieldType="number"
-      :fieldValue="depth"
-      :errors="errors.depth"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'depth',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          fieldId="id_wall_angle"
+          fieldLabel="Wall Angle"
+          fieldType="number"
+          :fieldValue="wall_angle"
+          :errors="errors.wall_angle"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'wall_angle',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_wall_angle"
-      fieldLabel="Wall Angle"
-      fieldType="number"
-      :fieldValue="wall_angle"
-      :errors="errors.wall_angle"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'wall_angle',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          fieldId="id_r"
+          fieldLabel="r"
+          fieldType="number"
+          :fieldValue="r"
+          :errors="errors.r"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'r',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_r"
-      fieldLabel="r"
-      fieldType="number"
-      :fieldValue="r"
-      :errors="errors.r"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'r',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          fieldId="id_rb"
+          fieldLabel="Rb"
+          fieldType="number"
+          :fieldValue="rb"
+          :errors="errors.rb"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'rb',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_rb"
-      fieldLabel="Rb"
-      fieldType="number"
-      :fieldValue="rb"
-      :errors="errors.rb"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'rb',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          fieldId="id_rf"
+          fieldLabel="Rf"
+          fieldType="number"
+          :fieldValue="rf"
+          :errors="errors.rf"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'rf',
+              value: $event.target.value,
+            })
+          "
+        />
+        <BaseFormField
+          fieldId="inputChoice"
+          fieldLabel="Choose input pair:"
+          fieldType="select"
+          :fieldValue="inputChoice"
+          :fieldChoices="inputChoices"
+          :errors="errors.inputChoice"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'inputChoice',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_rf"
-      fieldLabel="Rf"
-      fieldType="number"
-      :fieldValue="rf"
-      :errors="errors.rf"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'rf',
-          value: $event.target.value,
-        })
-      "
-    />
-    <BaseFormField
-      fieldId="inputChoice"
-      fieldLabel="Choose input pair:"
-      fieldType="select"
-      :fieldValue="inputChoice"
-      :fieldChoices="inputChoices"
-      :errors="errors.inputChoice"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'inputChoice',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          fieldId="id_w"
+          fieldLabel="W"
+          fieldType="number"
+          :fieldValue="w"
+          :errors="errors.w"
+          :readonly="isC1C2ReadOnly"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'w',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_w"
-      fieldLabel="W"
-      fieldType="number"
-      :fieldValue="w"
-      :errors="errors.w"
-      :readonly="isC1C2ReadOnly"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'w',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          fieldId="id_c1"
+          fieldLabel="C1"
+          fieldType="number"
+          :fieldValue="c1"
+          :errors="errors.c1"
+          :readonly="isWLReadOnly"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'c1',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      fieldId="id_c1"
-      fieldLabel="C1"
-      fieldType="number"
-      :fieldValue="c1"
-      :errors="errors.c1"
-      :readonly="isWLReadOnly"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'c1',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          v-show="selectedShape !== 'round'"
+          fieldId="id_l"
+          fieldLabel="L"
+          fieldType="number"
+          :fieldValue="l"
+          :errors="errors.l"
+          :readonly="isC1C2ReadOnly"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'l',
+              value: $event.target.value,
+            })
+          "
+        />
 
-    <BaseFormField
-      v-show="selectedShape !== 'round'"
-      fieldId="id_l"
-      fieldLabel="L"
-      fieldType="number"
-      :fieldValue="l"
-      :errors="errors.l"
-      :readonly="isC1C2ReadOnly"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'l',
-          value: $event.target.value,
-        })
-      "
-    />
-
-    <BaseFormField
-      v-show="selectedShape !== 'round'"
-      fieldId="id_c2"
-      fieldLabel="C2"
-      fieldType="number"
-      :fieldValue="c2"
-      :errors="errors.c2"
-      :readonly="isWLReadOnly"
-      @input="
-        $store.commit('form/updateField', {
-          field: 'c2',
-          value: $event.target.value,
-        })
-      "
-    />
+        <BaseFormField
+          v-show="selectedShape !== 'round'"
+          fieldId="id_c2"
+          fieldLabel="C2"
+          fieldType="number"
+          :fieldValue="c2"
+          :errors="errors.c2"
+          :readonly="isWLReadOnly"
+          @input="
+            $store.commit('form/updateField', {
+              field: 'c2',
+              value: $event.target.value,
+            })
+          "
+        />
+      </div>
+      <div class="col-lg-6">
+        <svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+          <polygon :points="polygonPoints" fill="none" stroke="black" />
+        </svg>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -171,12 +179,16 @@ export default {
       "rf",
       "selectedShape",
       "selectedProfile",
+      "coordinates",
     ]),
     isC1C2ReadOnly() {
       return this.inputChoice === "C1C2";
     },
     isWLReadOnly() {
       return this.inputChoice === "WL";
+    },
+    polygonPoints() {
+      return this.coordinates.map((point) => point.join(",")).join(" ");
     },
   },
   watch: {
@@ -299,6 +311,12 @@ export default {
       inputChoices: [
         { value: "WL", label: "W and L" },
         { value: "C1C2", label: "C1 and C2" },
+      ],
+      coordinates: [
+        [50, 50],
+        [150, 50],
+        [150, 150],
+        [50, 150],
       ],
     };
   },

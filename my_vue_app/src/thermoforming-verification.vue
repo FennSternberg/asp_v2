@@ -1,8 +1,6 @@
 <template>
   <div>
     <ProgressBar :currentStep="currentStep" :stepLabels="stepLabels" />
-
-    <!-- Conditional rendering of steps -->
     <div class="transition-container mt-3">
       <transition
         :enter-active-class="
@@ -31,7 +29,7 @@
       >
         <div :key="currentStep">
           <div class="row">
-            <div class="col-lg-6 mx-auto">
+            <div class="col-lg-10 mx-auto">
               <AnalysisDetails
                 ref="analysisDetailsRef"
                 @validationStatus="handleValidationStatus"
@@ -40,10 +38,18 @@
                 :currentUserId="currentUserId"
                 :errors="errors"
               ></AnalysisDetails>
+              <MaterialChoices
+                ref="materialChoicesRef"
+                @validationStatus="handleValidationStatus"
+                v-if="currentStep === 2"
+                :cavityMaterialChoices="cavityMaterialChoices"
+                :lidMaterialChoices="lidMaterialChoices"
+                :errors="errors"
+              ></MaterialChoices>
               <ShapeAndProfile
                 ref="shapeAndProfileRef"
                 @validationStatus="handleValidationStatus"
-                v-if="currentStep === 2"
+                v-if="currentStep === 3"
                 :shape-choices="shapeChoices"
                 :profile-choices="profileChoices"
                 :errors="errors"
@@ -51,19 +57,18 @@
               <CavityGeometry
                 ref="cavityGeometryRef"
                 @validationStatus="handleValidationStatus"
-                v-if="currentStep === 3"
+                v-if="currentStep === 4"
                 :errors="errors"
               ></CavityGeometry>
-              <DummyPage
+              <ThermoformingConfirmation
                 ref="dummyPageRef"
-                v-if="currentStep === 4"
-              ></DummyPage>
+                v-if="currentStep === 5"
+              ></ThermoformingConfirmation>
             </div>
           </div>
           <div class="row">
             <div class="col-lg-6 mx-auto">
-              <div class="mt-5 text-center">
-                <!-- Navigation -->
+              <div class="mt-4 text-center">
                 <button
                   @click="goToPreviousStep"
                   :hidden="currentStep === 1"
@@ -90,22 +95,26 @@
 <script>
 import AnalysisDetails from "./components/AnalysisDetails.vue";
 import ShapeAndProfile from "./components/ShapeAndProfile.vue";
-import DummyPage from "./components/DummyPage.vue";
+import ThermoformingConfirmation from "./components/ThermoformingConfirmation.vue";
 import ProgressBar from "./components/ProgressBar.vue";
 import CavityGeometry from "./components/CavityGeometry.vue";
+import MaterialChoices from "./components/MaterialChoices.vue";
 
 export default {
-  components: { 
+  components: {
     ProgressBar,
     AnalysisDetails,
     ShapeAndProfile,
     CavityGeometry,
-    DummyPage,
+    ThermoformingConfirmation,
+    MaterialChoices,
   },
   data() {
     return {
       internalContactChoices: window.internalContactChoicesFromDjango || [],
       currentUserId: window.currentUserIdFromDjango || null,
+      cavityMaterialChoices: window.availableMaterialsFromDjango || [],
+      lidMaterialChoices: window.availableLidsFromDjango || [],
       shapeChoices: [
         {
           label: "Round",
@@ -131,11 +140,12 @@ export default {
         },
       ],
       currentStep: 1,
-      totalSteps: 4,
+      totalSteps: 5,
       errors: {},
       isNavigatingBackward: false,
       stepLabels: [
         "Analysis Details",
+        "Material Choices",
         "Shape & Profile",
         "Cavity Geometry",
         "Confirmation",
@@ -146,9 +156,10 @@ export default {
     async goToNextStep() {
       const refNames = {
         1: "analysisDetailsRef",
-        2: "shapeAndProfileRef",
-        3: "cavityGeometryRef",
-        4: "dummyPageRef",
+        2: "materialChoicesRef",
+        3: "shapeAndProfileRef",
+        4: "cavityGeometryRef",
+        5: "thermoformingConfirmationRef",
       };
       this.isNavigatingBackward = false;
       const currentRef = this.$refs[refNames[this.currentStep]];
@@ -204,5 +215,12 @@ h1 {
 .reverse-fade-enter-to,
 .reverse-fade-leave-from {
   transform: translateX(0);
+}
+.form-page {
+  padding: 20px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 </style>

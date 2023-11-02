@@ -59,6 +59,20 @@
       :list-max-height="20"
     />
 
+    <!-- Vue3-Select Multiple -->
+    <Vue3Select
+      v-if="fieldType === 'vue3-select-multiple'"
+      :id="fieldId"
+      :options="fieldChoices"
+      :class="{ 'is-invalid': errors }"
+      :disabled="readonly"
+      :reduce="(option) => option.value"
+      :modelValue="fieldValue"
+      @update:modelValue="handleSelectInput"
+      :list-max-height="20"
+      multiple
+    />
+
     <!-- Error Messages -->
     <div class="invalid-feedback" v-if="errors">
       {{ errors[0] }}
@@ -78,7 +92,7 @@ export default {
     fieldId: String,
     fieldLabel: String,
     fieldType: String,
-    fieldValue: [String, Number],
+    fieldValue: [String, Number, Array],
     fieldChoices: Array,
     errors: Array,
     readonly: {
@@ -93,3 +107,5 @@ export default {
   },
 };
 </script>
+
+

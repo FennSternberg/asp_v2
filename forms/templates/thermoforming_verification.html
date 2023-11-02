@@ -4,6 +4,8 @@
 <script type="text/javascript">
   window.internalContactChoicesFromDjango = {{ internal_contact_choices|safe }};
   window.currentUserIdFromDjango = {{ current_user_id | default:"null" }};
+  window.availableMaterialsFromDjango = {{ available_materials|safe }};
+  window.availableLidsFromDjango = {{ available_lids|safe }};
 </script>
 <div class="container mt-5">
   <div id="verificationVue"></div>
