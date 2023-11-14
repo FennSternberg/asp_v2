@@ -1,6 +1,6 @@
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
-from ..models import ColdformingStamp, Material, WVTRData, OTRData,ColdformingData, ThermoformingData, ThermoformingLidData, DensityData, YoungsModulusData,  TensileCurveData, DruckerPragerCurveData, LayerStructure
+from ..models import ThermoformingPlug, ColdformingStamp, Material, WVTRData, OTRData,ColdformingData, ThermoformingData, ThermoformingLidData, DensityData, YoungsModulusData,  TensileCurveData, DruckerPragerCurveData, LayerStructure
 
 class DeleteViewMixin:
     template_name = 'confirm_delete.html'
@@ -21,6 +21,9 @@ class MaterialDeleteView(DeleteViewMixin, DeleteView):
 
 class ColdformingStampDeleteView(DeleteViewMixin, DeleteView):
     model = ColdformingStamp
+
+class ThermoformingPlugDeleteView(DeleteViewMixin, DeleteView):
+    model = ThermoformingPlug
 
 class WVTRDataDeleteView(DeleteViewMixin, DeleteView):
     model = WVTRData

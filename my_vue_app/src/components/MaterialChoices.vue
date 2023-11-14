@@ -59,6 +59,8 @@ export default {
         cavity_materials: this.cavity_materials,
         lid_materials: this.lid_materials,
       };
+      console.log('fenn')
+      console.log(this.cavity_materials)
       this.validateForm("/ASP/validate_material_details/", postData);
     },
   },

@@ -15,7 +15,7 @@ export default {
       }
       return cookieValue;
     },
-    async validateForm(url, postData) {
+    async validateForm(url, postData, nextPage = true) {
       const csrftoken = this.getCookie("csrftoken");
 
       try {
@@ -33,7 +33,8 @@ export default {
         console.log(response);
         const jsonResponse = await response.json();
         if (jsonResponse.status === "success") {
-          this.$emit("validationStatus", true);
+          this.$emit("validationStatus", true, {}, nextPage);
+
           // Check if "updated_data" is present in jsonResponse
           if ("updated_data" in jsonResponse) {
             // Update Vuex state using the generic `updateField` mutation
@@ -49,6 +50,7 @@ export default {
         } else {
           this.$emit("validationStatus", false, jsonResponse.errors);
         }
+        return jsonResponse;
       } catch (error) {
         console.error("Error validating the form: ", error);
         this.$emit("validationStatus", false, {});

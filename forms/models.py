@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from material_data.models import LayerStructure
 
 class AnalysisDetail(models.Model):
     # ID of the user making the request
@@ -10,8 +11,6 @@ class AnalysisDetail(models.Model):
     ANALYSIS_TYPE_CHOICES = [
         ('general', 'General'),
         ('thermoforming_verification', 'Thermoforming Verification'),
-        ('thermoforming_plug', 'Thermoforming Plug'),
-        ('thermoforming_cad', 'Thermoforming CAD'),
     ]
     analysis_type = models.CharField(
         max_length=30,
@@ -55,28 +54,55 @@ class ThermoformingCavityParameters(models.Model):
     r = models.FloatField()
     rb = models.FloatField() 
     rf = models.FloatField()
+
+    def get_shape_choices(self):
+        return [
+              {
+          "label": "Round",
+          "value": "round",
+          "path": "/static/images/cavity/round.png?v=2",
+        },
+        {
+          "label": "Oblong",
+          "value": "oblong",
+          "path": "/static/images/cavity/oblong.png?v=2",
+        }
+        ]
+    
+    def get_profile_choices(self):
+        return [
+              {
+          "label": "Profile 2",
+          "value": "profile2",
+          "path": "/static/images/cavity/profile2.png?v=2",
+        },
+        {
+          "label": "Profile 3",
+          "value": "profile3",
+          "path": "/static/images/cavity/profile3.png?v=2",
+        },
+        ]
      
 class ThermoformingProcessParameters(models.Model):
-    # Thermoforming Material Fields
-    LAMINATE_CHOICES = [("amsky_305","Amsky 305")]
-    LID_CHOICES = [("amsky_70","Amsky lid 70")]
-    
-    laminate_material = models.CharField(max_length=50, choices=LAMINATE_CHOICES)
-    lid_material = models.CharField(max_length=50, choices=LID_CHOICES)
-    
-    # Admin Usage Parameters Fields
-    CONTACT_CHOICES = [('kinematic', 'Kinematic'), ('penalty', 'Penalty')] 
-    
+    CONTACT_CHOICES = [('kinematic', 'Kinematic'), ('penalty', 'Penalty')]
     contact = models.CharField(max_length=20, choices=CONTACT_CHOICES, default='kinematic')
     temperature = models.FloatField(default=125)
     pressure = models.FloatField(default=1)
     pressure_build_up_time = models.FloatField(default=0.05)
 
+class ThermoformingPlugParameters(models.Model):
+    width = models.FloatField()
+    length = models.FloatField()
+    range_min = models.FloatField()
+    range_max = models.FloatField()
+    n_travel = models.FloatField()
+    r_b = models.FloatField()
+    r_f = models.FloatField()
 
-class ThermoformingVerificationSimulation(models.Model):
+class ThermoformingSimulation(models.Model):
     analysis_detail = models.ForeignKey(AnalysisDetail, on_delete=models.CASCADE)
-    thermoforming_cavity_parameters = models.ForeignKey(ThermoformingCavityParameters, on_delete=models.SET_NULL, null=True, default=None)
-    thermoforming_process_parameters = models.ForeignKey(ThermoformingProcessParameters, on_delete=models.SET_NULL, null=True, default=None)
-    calculate_permeability = models.BooleanField(default=False)
-    compare_with_other_laminates_and_lids = models.BooleanField(default=False)
-
+    cavity_parameters = models.ForeignKey(ThermoformingCavityParameters, on_delete=models.SET_NULL, null=True, default=None)
+    process_parameters = models.ForeignKey(ThermoformingProcessParameters, on_delete=models.SET_NULL, null=True, default=None)
+    plug_parameters = models.ForeignKey(ThermoformingPlugParameters, on_delete=models.SET_NULL, null=True, default=None)
+    cavity_materials = models.ManyToManyField(LayerStructure, related_name="cavity_materials")
+    lid_materials = models.ManyToManyField(LayerStructure, related_name="lid_materials")

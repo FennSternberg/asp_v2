@@ -12,6 +12,17 @@ class ColdformingStamp(models.Model):
     def __str__(self):
         return f"({self.id}).{self.name}"
 
+class ThermoformingPlug(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    friction_coefficient = models.FloatField()
+
+    def units(self, quantity):
+        units = {"friction_coefficient": "<>"}
+        return units.get(quantity, "")
+
+    def __str__(self):
+        return f"({self.id}).{self.name}"
+
 class Material(models.Model):
     name = models.CharField(max_length=200, unique=True)
     thickness = models.FloatField()

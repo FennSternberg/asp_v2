@@ -56,11 +56,15 @@ class MaterialDetailSerializer(serializers.Serializer):
         return lid_materials
 
 class CavityGeometrySerializer(serializers.ModelSerializer):
-    c1 = serializers.FloatField(required=False)
+    c2 = serializers.FloatField(required=False)
     l = serializers.FloatField(required=False)
+    rf = serializers.FloatField(required=False)
+    rb = serializers.FloatField(required=False)
+    x_sketch = serializers.ListField(child=serializers.FloatField(), required=False)
+    y_sketch = serializers.ListField(child=serializers.FloatField(), required=False)
     class Meta:
         model = ThermoformingCavityParameters
-        fields = ['w', 'c1', 'l', 'c2', 'depth', 'wall_angle', 'r', 'rf', 'rb','profile','shape']
+        fields = ['w', 'c1', 'l', 'c2', 'depth', 'wall_angle', 'r', 'rf', 'rb','profile','shape','x_sketch','y_sketch']
 
     def validate(self, data):
         profile = data.get('profile', None)
@@ -68,9 +72,11 @@ class CavityGeometrySerializer(serializers.ModelSerializer):
         if shape=="oblong":
             custom_is_input(["l","c1"], data)
         
-        if profile == "profile2":
+        if profile != "profile1":
             custom_is_input(["rf"], data)
-
+        
+        if profile != "profile2":
+            custom_is_input(["rb"], data)
         # Type validation
         for key, value in data.items():
             if key not in ['profile','shape']:

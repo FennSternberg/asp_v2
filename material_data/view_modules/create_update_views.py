@@ -3,8 +3,8 @@ from django.urls import reverse_lazy
 from django.forms.models import model_to_dict
 import json
 from django.http import HttpResponse
-from ..models import LayerStructure,ColdformingStamp, MaterialOrder, Material, OTRData, WVTRData, ColdformingData, ThermoformingLidData, ThermoformingData, DensityData, YoungsModulusData, DruckerPragerCurveData, DruckerPragerCurvePoint,  TensileCurveData, TensileCurvePoint
-from ..forms import ColdformingStampForm, LayerStructureForm, MaterialForm, CreateOTRDataForm, UpdateOTRDataForm, CreateWVTRDataForm, UpdateWVTRDataForm, ThermoformingDataForm,ThermoformingLidDataForm, ColdformingDataForm, CreateDensityDataForm, UpdateDensityDataForm, CreateYoungsModulusDataForm, UpdateYoungsModulusDataForm,CreateDruckerPragerCurveDataForm, UpdateDruckerPragerCurveDataForm, CreateTensileCurveDataForm, UpdateTensileCurveDataForm,  ThermoformingDataUpdateForm, ThermoformingLidDataUpdateForm, ColdformingDataUpdateForm
+from ..models import LayerStructure, ThermoformingPlug, ColdformingStamp, MaterialOrder, Material, OTRData, WVTRData, ColdformingData, ThermoformingLidData, ThermoformingData, DensityData, YoungsModulusData, DruckerPragerCurveData, DruckerPragerCurvePoint,  TensileCurveData, TensileCurvePoint
+from ..forms import ThermoformingPlugForm, ColdformingStampForm, LayerStructureForm, MaterialForm, CreateOTRDataForm, UpdateOTRDataForm, CreateWVTRDataForm, UpdateWVTRDataForm, ThermoformingDataForm,ThermoformingLidDataForm, ColdformingDataForm, CreateDensityDataForm, UpdateDensityDataForm, CreateYoungsModulusDataForm, UpdateYoungsModulusDataForm,CreateDruckerPragerCurveDataForm, UpdateDruckerPragerCurveDataForm, CreateTensileCurveDataForm, UpdateTensileCurveDataForm,  ThermoformingDataUpdateForm, ThermoformingLidDataUpdateForm, ColdformingDataUpdateForm
 from django.forms import inlineformset_factory
 from django import forms
 
@@ -45,6 +45,25 @@ class ColdformingStampUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form_title'] = 'Update Coldforming Stamp'
+        context['display_context'] = {"material": self.object.name, "material id": self.object.id}
+        return context
+
+class ThermoformingPlugCreateView(CreateView):
+    model = ThermoformingPlug
+    form_class = ThermoformingPlugForm
+    template_name = 'form_templates/form_template.html' 
+    success_url = reverse_lazy('thermoformingplug_list')
+    extra_context = {'form_title': 'Create Thermoforming Plug'}
+    
+
+class ThermoformingPlugUpdateView(UpdateView):
+    model = ThermoformingPlug
+    form_class = ThermoformingPlugForm
+    template_name = 'form_templates/form_template.html'
+    success_url = reverse_lazy('thermoformingplug_list')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Update Thermoforming Plug'
         context['display_context'] = {"material": self.object.name, "material id": self.object.id}
         return context
 

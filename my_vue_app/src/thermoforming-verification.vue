@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Thermoforming Verification</h1>
     <ProgressBar :currentStep="currentStep" :stepLabels="stepLabels" />
     <div class="transition-container mt-3">
       <transition
@@ -30,10 +31,17 @@
         <div :key="currentStep">
           <div class="row">
             <div class="col-lg-10 mx-auto">
+              <PlugParameters
+                ref="plugParametersRef"
+                @validationStatus="handleValidationStatus"
+                v-if="currentStep === 1"
+                :plugChoices="availablePlugs"
+                :errors="errors"
+              ></PlugParameters>
               <AnalysisDetails
                 ref="analysisDetailsRef"
                 @validationStatus="handleValidationStatus"
-                v-if="currentStep === 1"
+                v-if="currentStep === 2"
                 :internalContactChoices="internalContactChoices"
                 :currentUserId="currentUserId"
                 :errors="errors"
@@ -41,7 +49,7 @@
               <MaterialChoices
                 ref="materialChoicesRef"
                 @validationStatus="handleValidationStatus"
-                v-if="currentStep === 2"
+                v-if="currentStep === 3"
                 :cavityMaterialChoices="cavityMaterialChoices"
                 :lidMaterialChoices="lidMaterialChoices"
                 :errors="errors"
@@ -49,7 +57,7 @@
               <ShapeAndProfile
                 ref="shapeAndProfileRef"
                 @validationStatus="handleValidationStatus"
-                v-if="currentStep === 3"
+                v-if="currentStep === 4"
                 :shape-choices="shapeChoices"
                 :profile-choices="profileChoices"
                 :errors="errors"
@@ -57,12 +65,14 @@
               <CavityGeometry
                 ref="cavityGeometryRef"
                 @validationStatus="handleValidationStatus"
-                v-if="currentStep === 4"
+                v-if="currentStep === 5"
                 :errors="errors"
               ></CavityGeometry>
               <ThermoformingConfirmation
                 ref="dummyPageRef"
-                v-if="currentStep === 5"
+                v-if="currentStep === 6"
+                :cavityMaterialChoices="cavityMaterialChoices"
+                :lidMaterialChoices="lidMaterialChoices"
               ></ThermoformingConfirmation>
             </div>
           </div>
@@ -99,6 +109,7 @@ import ThermoformingConfirmation from "./components/ThermoformingConfirmation.vu
 import ProgressBar from "./components/ProgressBar.vue";
 import CavityGeometry from "./components/CavityGeometry.vue";
 import MaterialChoices from "./components/MaterialChoices.vue";
+import PlugParameters from "./components/PlugParameters.vue";
 
 export default {
   components: {
@@ -108,6 +119,7 @@ export default {
     CavityGeometry,
     ThermoformingConfirmation,
     MaterialChoices,
+    PlugParameters,
   },
   data() {
     return {
@@ -115,35 +127,15 @@ export default {
       currentUserId: window.currentUserIdFromDjango || null,
       cavityMaterialChoices: window.availableMaterialsFromDjango || [],
       lidMaterialChoices: window.availableLidsFromDjango || [],
-      shapeChoices: [
-        {
-          label: "Round",
-          value: "round",
-          path: "/static/images/cavity/round.png",
-        },
-        {
-          label: "Oblong",
-          value: "oblong",
-          path: "/static/images/cavity/oblong.png",
-        },
-      ],
-      profileChoices: [
-        {
-          label: "Profile 2",
-          value: "profile2",
-          path: "/static/images/cavity/profile2.png",
-        },
-        {
-          label: "Profile 3",
-          value: "profile3",
-          path: "/static/images/cavity/profile3.png",
-        },
-      ],
+      shapeChoices: window.shapeChoicesFromDjango || [],
+      profileChoices: window.profileChoicesFromDjango || [],
+      availablePlugs: window.availablePlugsFromDjango || [],
       currentStep: 1,
       totalSteps: 5,
       errors: {},
       isNavigatingBackward: false,
       stepLabels: [
+        "Plug",
         "Analysis Details",
         "Material Choices",
         "Shape & Profile",
@@ -155,11 +147,12 @@ export default {
   methods: {
     async goToNextStep() {
       const refNames = {
-        1: "analysisDetailsRef",
-        2: "materialChoicesRef",
-        3: "shapeAndProfileRef",
-        4: "cavityGeometryRef",
-        5: "thermoformingConfirmationRef",
+        1: "plugParametersRef",
+        2: "analysisDetailsRef",
+        3: "materialChoicesRef",
+        4: "shapeAndProfileRef",
+        5: "cavityGeometryRef",
+        6: "thermoformingConfirmationRef",
       };
       this.isNavigatingBackward = false;
       const currentRef = this.$refs[refNames[this.currentStep]];
@@ -167,12 +160,14 @@ export default {
         currentRef.validateThisForm();
       }
     },
-    handleValidationStatus(status, errors = {}) {
+    handleValidationStatus(status, errors = {}, nextPage = true) {
       console.log(errors);
       if (status) {
         this.errors = {};
-        if (this.currentStep < this.totalSteps) {
-          this.currentStep += 1;
+        if (nextPage) {
+          if (this.currentStep < this.totalSteps) {
+            this.currentStep += 1;
+          }
         }
       } else {
         this.errors = errors;

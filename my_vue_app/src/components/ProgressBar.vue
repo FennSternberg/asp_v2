@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-container">
+  <div class="progress-container mt-4 mb-4">
     <div class="step-labels">
       <div
         v-for="(step, index) in stepLabels"
@@ -59,7 +59,7 @@ export default {
 }
 
 .connector {
-  width: 180px;
+  width: 90px;
   height: 4px;
   background-color: #adcbf1; /* Default color */
 }

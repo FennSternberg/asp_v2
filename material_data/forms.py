@@ -1,5 +1,5 @@
 from django import forms
-from .models import  ColdformingStamp, LayerStructure, Material, DensityData, OTRData, WVTRData,ColdformingData, ThermoformingData, ThermoformingLidData, YoungsModulusData,  TensileCurveData, DruckerPragerCurveData
+from .models import  ThermoformingPlug, ColdformingStamp, LayerStructure, Material, DensityData, OTRData, WVTRData,ColdformingData, ThermoformingData, ThermoformingLidData, YoungsModulusData,  TensileCurveData, DruckerPragerCurveData
 
 FORM_CONTROL_ATTRS = {'class': 'form-control'}
 FORM_CHECK_INPUT_ATTRS = {'class': 'form-check-input'}
@@ -77,6 +77,17 @@ class ColdformingStampForm(BaseColdformingStampForm):
     name = CHAR_FIELD
     class Meta(BaseColdformingStampForm.Meta):
         fields = ['name'] + BaseColdformingStampForm.Meta.fields
+
+class BaseThermoformingPlugForm(BaseUnitForm,forms.ModelForm):
+    friction_coefficient = FLOAT_FIELD
+    class Meta:
+        model = ThermoformingPlug
+        fields = ['friction_coefficient']
+
+class ThermoformingPlugForm(BaseThermoformingPlugForm):
+    name = CHAR_FIELD
+    class Meta(BaseThermoformingPlugForm.Meta):
+        fields = ['name'] + BaseThermoformingPlugForm.Meta.fields
 
 class BaseWVTRDataForm(BaseUnitForm, forms.ModelForm):
     temperature = FLOAT_FIELD

@@ -73,7 +73,6 @@ export default {
 .image-radio-img {
   width: 200px; /* Fixed width */
   /* height is automatically calculated to maintain aspect ratio */
-  border: 1px solid gray;
   transition: all 0.3s;
 }
 

@@ -6,6 +6,9 @@
   window.currentUserIdFromDjango = {{ current_user_id | default:"null" }};
   window.availableMaterialsFromDjango = {{ available_materials|safe }};
   window.availableLidsFromDjango = {{ available_lids|safe }};
+  window.profileChoicesFromDjango = {{ profile_choices|safe }};
+  window.shapeChoicesFromDjango = {{ shape_choices|safe }};
+  window.availablePlugsFromDjango = {{ available_plugs | safe}};
 </script>
 <div class="container mt-5">
   <div id="verificationVue"></div>

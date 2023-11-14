@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnalysisDetail, ThermoformingCavityParameters, ThermoformingVerificationSimulation
+from .models import AnalysisDetail, ThermoformingCavityParameters, ThermoformingSimulation
 from django.contrib.auth.models import User
 from django_select2.forms import Select2Widget
 from django.core.exceptions import ValidationError
@@ -60,7 +60,7 @@ class ThermoformingParametersForm(forms.ModelForm):
 
 class ThermoformingVerificationSimulationForm(forms.ModelForm):
     class Meta:
-        model = ThermoformingVerificationSimulation
+        model = ThermoformingSimulation
         fields = ['calculate_permeability', 'compare_with_other_laminates_and_lids']
         widgets = {
             'calculate_permeability': forms.CheckboxInput(attrs={'class': 'form-check-input', 'v-model': 'formData.calculate_permeability'}),

@@ -1,6 +1,6 @@
 import numpy as np
 
-# piecewise function wall profile calculation (profile 1 and profile3)
+
 def y_s(C1, R1, R2, wall_angle, r, H):
     ys = R1 - (1 - R2 / R1) * (R1 ** 2 - x_d(C1, R1, R2, wall_angle, r, H) ** 2) ** 0.5
     return ys
@@ -92,17 +92,17 @@ def calc_short_from_long(C1, r, wall_angle):
     W = C1 - 2. * r * np.tan(np.pi / 4. - 0.5 * wall_angle * np.pi / 180.)
     return W
 
-def calc_R2(W, wall_angle):  # attempted assumed radius function
+def calc_R2(W, wall_angle):  
     R2 = W / 10 - wall_angle / 20 
     return R2 
 
 def calc_Rc(C1, wall_angle, depth,
-            r):  # Calculate critical value Rc to determine if valid profile3
+            r): 
     Rc = (0.5 * C1 * np.cos(wall_angle * np.pi / 180.) - (depth - r) * np.sin(
         wall_angle * np.pi / 180.) - r) / (1. - np.sin(wall_angle * np.pi / 180.))
     return Rc
 
-def calc_R(C1, wall_angle, depth, r):  # Calculate true circle radius for profile1 type
+def calc_R(C1, wall_angle, depth, r):
     R_correct = (0.5 * C1 * np.cos(wall_angle * np.pi / 180.) - (depth - r) * np.sin(
         wall_angle * np.pi / 180.) - r) / (1. - np.sin(wall_angle * np.pi / 180.))
     return R_correct
@@ -123,8 +123,7 @@ def valid_profile1(R_b, wall_angle, C1, depth, r, err):
 
 def valid_profile2(C1, R_f, wall_angle, r, depth):
     theta = wall_angle * np.pi/180 
-    flat = 2 * (np.tan(theta) * (R_f - R_f * np.sin(theta) - depth + r - r * np.sin(theta)) - R_f * np.cos(
-        theta) + C1 / 2 - r * np.cos(theta))
+    flat = get_profile2_flat(theta, R_f, depth, r, C1)
    
     if flat < 0:
         return False
@@ -133,7 +132,10 @@ def valid_profile2(C1, R_f, wall_angle, r, depth):
         return False
     else:
         return True
-
+    
+def get_profile2_flat(theta, R_f, depth, r, C1):
+    return 2 * (np.tan(theta) * (R_f - R_f * np.sin(theta) - depth + r - r * np.sin(theta)) - R_f * np.cos(
+        theta) + C1 / 2 - r * np.cos(theta))
 
 def valid_profile3(R_b, R_f, wall_angle, C1, depth, r):
     Rc = calc_Rc(C1, wall_angle, depth, r)
@@ -148,3 +150,109 @@ def valid_profile3(R_b, R_f, wall_angle, C1, depth, r):
     else:
         return True
 
+
+def sketch_geometry(prof, C1_sketch, Rb_sketch, Rf_sketch, wall_angle_sketch, r_sketch, H_sketch, shape, C2):
+   
+    theta_sketch = angle_to_theta(wall_angle_sketch)
+    if prof == 'profile1':
+        x_all, y_all = sketch_profile1(C1_sketch, Rb_sketch, wall_angle_sketch, r_sketch, H_sketch)
+    elif prof == 'profile2':
+        flat_sketch = get_profile2_flat(theta_sketch, Rf_sketch, H_sketch, r_sketch, C1_sketch)
+        x_all, y_all = sketch_profile2(C1_sketch, H_sketch, theta_sketch, Rf_sketch, flat_sketch, r_sketch)
+    else:
+        x_all, y_all = sketch_profile3(C1_sketch, Rb_sketch, Rf_sketch, wall_angle_sketch, r_sketch, H_sketch,)
+    
+    round_x = np.append(-np.flip(x_all),x_all)
+    round_y = np.append(np.flip(y_all),y_all)
+    if shape == "oblong":
+        flat = C2 - C1_sketch
+        x_all_oblong = np.append(np.linspace(0,flat/2,10), x_all + flat/2)
+        y_all_oblong = np.append(np.zeros(10), y_all)
+        oblong_x = np.append(-np.flip(x_all_oblong),x_all_oblong)
+        oblong_y = np.append(np.flip(y_all_oblong),y_all_oblong)
+    else:
+        oblong_x = np.array([])
+        oblong_y = np.array([])
+    
+    return round_x, round_y, oblong_x , oblong_y
+
+def angle_to_theta(angle):
+    theta = angle * np.pi / 180
+    return theta
+
+def sketch_profile1(C1, R, wall_angle, r, H):
+    theta = wall_angle * np.pi / 180
+    x = np.linspace(0, R * np.cos(theta), 10)  # circle
+    y = R - (R ** 2 - x ** 2) ** 0.5
+
+    x_all = x
+    y_all = y
+
+    x = np.linspace(R * np.cos(theta), x_b(C1, r, wall_angle), 10)  # wall CB
+    y = y_from_xc_to_xb(x, C1, wall_angle, r, H)
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+
+    x = np.linspace(x_b(C1, r, wall_angle), float(C1 / 2), 10)  # curve BA
+    y = y_from_xb_to_xa(x, C1, r, H)
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+
+    return x_all, y_all
+
+
+def sketch_profile2(C1, H, theta, R, flat, r):
+    x = np.linspace(0, flat / 2, 10)
+    y = 0 * x
+
+    x_all = x
+    y_all = y
+
+    x = np.linspace(flat / 2, flat / 2 + R * np.cos(theta), 10)  # curve DC
+    y = profile2_y_from_xd_to_xc(x, R, flat)
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+
+    x = np.linspace(flat / 2 + R * np.cos(theta), C1 / 2 - r * np.cos(theta), 10)  # wall CB
+    y = H - r + r * np.sin(theta) + (x - C1 / 2 + r * np.cos(theta)) * (1 / np.tan(theta))
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+
+    x = np.linspace(C1 / 2 - r * np.cos(theta), C1 / 2, 10)  # curve BA
+    y = H - r + (r ** 2 - (x - C1 / 2) ** 2) ** 0.5
+ 
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+
+    return x_all, y_all
+
+
+def sketch_profile3(C1, R1, R2, wall_angle, r, H):
+    x = np.linspace(0, x_d(C1, R1, R2, wall_angle, r, H), 10)  # curve OD
+    y = profile_1_and_3_y_from_zero_to_xd(x, R1)
+
+    x_all = x
+    y_all = y
+
+    x = np.linspace(x_d(C1, R1, R2, wall_angle, r, H), x_c(C1, R1, R2, wall_angle, r, H), 10)  # curve DC
+    y = profile_1_and_3_y_from_xd_to_xc(x, C1, R1, R2, wall_angle, r, H)
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+    x = np.linspace(x_c(C1, R1, R2, wall_angle, r, H), x_b(C1, r, wall_angle), 10)  # wall CB
+    y = y_from_xc_to_xb(x, C1, wall_angle, r, H)
+ 
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+    x = np.linspace(x_b(C1, r, wall_angle), float(C1 / 2), 10)  # curve BA
+    y = y_from_xb_to_xa(x, C1, r, H)
+
+    x_all = np.append(x_all, x[1:])
+    y_all = np.append(y_all, y[1:])
+
+    return x_all, y_all

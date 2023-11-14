@@ -1,5 +1,5 @@
 from django.views.generic import ListView
-from ..models import LayerStructure,ColdformingStamp, MaterialOrder, Material,OTRData, WVTRData,ColdformingData, ThermoformingData,ThermoformingLidData, DensityData, YoungsModulusData,  TensileCurveData, TensileCurvePoint, DruckerPragerCurveData, DruckerPragerCurvePoint
+from ..models import ThermoformingPlug, LayerStructure,ColdformingStamp, MaterialOrder, Material,OTRData, WVTRData,ColdformingData, ThermoformingData,ThermoformingLidData, DensityData, YoungsModulusData,  TensileCurveData, TensileCurvePoint, DruckerPragerCurveData, DruckerPragerCurvePoint
 from django.db.models import Q
 from django.db.models import Prefetch
 
@@ -126,6 +126,18 @@ class MaterialListView(FieldUnitsMixin,ListView):
 class ColdformingStampListView(FieldUnitsMixin,ListView):
     model = ColdformingStamp
     template_name = 'list_templates/coldformingstamp_list.html'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('search')
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) 
+            ).distinct()
+        return queryset
+    
+class ThermoformingPlugListView(FieldUnitsMixin,ListView):
+    model = ThermoformingPlug
+    template_name = 'list_templates/thermoformingplug_list.html'
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('search')

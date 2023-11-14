@@ -46,6 +46,7 @@
         />
 
         <BaseFormField
+          v-show="selectedProfile !== 'profile2'"
           fieldId="id_rb"
           fieldLabel="Rb"
           fieldType="number"
@@ -149,10 +150,60 @@
           "
         />
       </div>
-      <div class="col-lg-6">
-        <svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
-          <polygon :points="polygonPoints" fill="none" stroke="black" />
-        </svg>
+      <div class="col-lg-6 justify-content-center">
+        <div class="row">
+          <img
+            class="cavity-image"
+            :src="`/static/images/cavity/thermoveridims-${selectedProfile}-round.svg`"
+            alt="Diagram of cavity dimensions"
+          />
+          <img
+            v-if="selectedShape == 'oblong'"
+            class="cavity-image"
+            :src="`/static/images/cavity/thermoveridims-${selectedProfile}-oblong.svg`"
+            alt="Diagram of cavity dimensions"
+          />
+        </div>
+        <div class="row">
+          <div class="col-auto mx-auto mt-3">
+            <button class="btn btn-info" @click="validateThisFormNoProgress">
+              Sketch My Cavity
+            </button>
+          </div>
+        </div>
+
+        <div class="row">
+          <svg
+            class="mt-3 mb-3"
+            :viewBox="roundviewBoxValues"
+            :height="svgHeight"
+            :width="svgWidth"
+            xmlns="http://www.w3.org/2000/svg"
+            ref="svgElement"
+          >
+            <polyline
+              :points="roundPoints"
+              fill="none"
+              stroke="black"
+              stroke-width="0.1"
+            />
+          </svg>
+          <svg
+            class="mt-3 mb-3"
+            :viewBox="oblongviewBoxValues"
+            :height="svgHeight"
+            :width="svgWidth"
+            xmlns="http://www.w3.org/2000/svg"
+            ref="svgElement"
+          >
+            <polyline
+              :points="oblongPoints"
+              fill="none"
+              stroke="black"
+              stroke-width="0.1"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   </div>
@@ -179,7 +230,8 @@ export default {
       "rf",
       "selectedShape",
       "selectedProfile",
-      "coordinates",
+      "round_coordinates",
+      "oblong_coordinates",
     ]),
     isC1C2ReadOnly() {
       return this.inputChoice === "C1C2";
@@ -187,8 +239,23 @@ export default {
     isWLReadOnly() {
       return this.inputChoice === "WL";
     },
-    polygonPoints() {
-      return this.coordinates.map((point) => point.join(",")).join(" ");
+    roundPoints() {
+      return this.getPoints(this.round_coordinates);
+    },
+    oblongPoints() {
+      return this.getPoints(this.oblong_coordinates);
+    },
+    roundboundingBox() {
+      return this.getboundingBox(this.round_coordinates);
+    },
+    oblongboundingBox() {
+      return this.getboundingBox(this.oblong_coordinates);
+    },
+    roundviewBoxValues() {
+      return this.getViewBoxValues(this.roundboundingBox);
+    },
+    oblongviewBoxValues() {
+      return this.getViewBoxValues(this.oblongboundingBox);
     },
   },
   watch: {
@@ -234,7 +301,48 @@ export default {
     errors: Object,
   },
   methods: {
-    validateThisForm() {
+    getPoints(coordinates) {
+      if (coordinates) {
+        return coordinates
+          .map((point) => [point[0], -point[1] + this.svgHeight])
+          .map((point) => point.join(","))
+          .join(" ");
+      } else {
+        return [];
+      }
+    },
+    getboundingBox(coordinates) {
+      if (coordinates && coordinates.length > 0) {
+        let minX = coordinates[0][0];
+        let minY = -coordinates[0][1] + this.svgHeight;
+        let maxX = coordinates[0][0];
+        let maxY = -coordinates[0][1] + this.svgHeight;
+
+        coordinates.forEach((point) => {
+          minX = Math.min(minX, point[0]);
+          minY = Math.min(minY, -point[1] + this.svgHeight);
+          maxX = Math.max(maxX, point[0]);
+          maxY = Math.max(maxY, -point[1] + this.svgHeight);
+        });
+
+        return {
+          minX: minX,
+          minY: minY,
+          width: maxX - minX,
+          height: maxY - minY,
+        };
+      } else {
+        return null;
+      }
+    },
+    getViewBoxValues(boundingBox) {
+      if (boundingBox) {
+        return `${boundingBox.minX} ${boundingBox.minY} ${boundingBox.width} ${boundingBox.height}`;
+      } else {
+        return "0 0 300 300";
+      }
+    },
+    getPostData() {
       const postData = {
         w: this.w,
         c1: this.c1,
@@ -250,7 +358,64 @@ export default {
       };
       console.log("Validate");
       console.log(postData);
-      this.validateForm("/ASP/validate_cavity_geometry/", postData);
+      return postData;
+    },
+
+    async validateThisFormNoProgress() {
+      const postData = this.getPostData();
+      const response = await this.validateForm(
+        "/ASP/validate_cavity_geometry/",
+        postData,
+        false
+      );
+      if (
+        response.sketch_points &&
+        response.sketch_points[0] &&
+        response.sketch_points[0].length >= 2
+      ) {
+        this.$store.commit("form/updateField", {
+          field: "round_coordinates",
+          value: response.sketch_points[0],
+        });
+      }
+      if (
+        response.sketch_points &&
+        response.sketch_points[1] &&
+        response.sketch_points[1].length >= 2
+      ) {
+        this.$store.commit("form/updateField", {
+          field: "oblong_coordinates",
+          value: response.sketch_points[1],
+        });
+      }
+    },
+    async validateThisForm() {
+      const postData = this.getPostData();
+      const response = await this.validateForm(
+        "/ASP/validate_cavity_geometry/",
+        postData
+      );
+      if (
+        response.sketch_points &&
+        response.sketch_points[0] &&
+        response.sketch_points[0].length >= 2
+      ) {
+        this.$store.commit("form/updateField", {
+          field: "round_coordinates",
+          value: response.sketch_points[0],
+        });
+      }
+
+      if (
+        response.sketch_points &&
+        response.sketch_points[1] &&
+        response.sketch_points[1].length >= 2
+      ) {
+        this.$store.commit("form/updateField", {
+          field: "oblong_coordinates",
+          value: response.sketch_points[1],
+        });
+      }
     },
     updateLongFromShort() {
       const calculatedC1 = this.calcLongFromShort(
@@ -308,15 +473,11 @@ export default {
 
   data() {
     return {
+      svgHeight: 150,
+      svgWidth: 150,
       inputChoices: [
         { value: "WL", label: "W and L" },
         { value: "C1C2", label: "C1 and C2" },
-      ],
-      coordinates: [
-        [50, 50],
-        [150, 50],
-        [150, 150],
-        [50, 150],
       ],
     };
   },
@@ -324,5 +485,11 @@ export default {
 </script>
 
 <style scoped>
-/* Your CSS styling here */
+/* Styling for the images in the first row */
+.cavity-image {
+  max-width: 75%; /* sets the image width to half of its container */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 </style>

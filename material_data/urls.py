@@ -19,6 +19,11 @@ urlpatterns = [
     path('coldformingstamp/<int:pk>/edit/', views.ColdformingStampUpdateView.as_view(), name='coldformingstamp_update'),
     path('coldformingstamp/<int:pk>/delete/', views.ColdformingStampDeleteView.as_view(), name='coldformingstamp_delete'), 
 
+    path('thermoformingplug/', views.ThermoformingPlugListView.as_view(), name='thermoformingplug_list'),
+    path('thermoformingplug/new/', views.ThermoformingPlugCreateView.as_view(), name='thermoformingplug_create'),
+    path('thermoformingplug/<int:pk>/edit/', views.ThermoformingPlugUpdateView.as_view(), name='thermoformingplug_update'),
+    path('thermoformingplug/<int:pk>/delete/', views.ThermoformingPlugDeleteView.as_view(), name='thermoformingplug_delete'), 
+
     path('layer_structure/', views.LayerStructureListView.as_view(), name='layerstructure_list'),
     path('layer_structure/new/', views.LayerStructureCreateView.as_view(), name='layerstructure_create'),
     path('layer_structure/<int:pk>/edit/', views.LayerStructureUpdateView.as_view(), name='layerstructure_update'),

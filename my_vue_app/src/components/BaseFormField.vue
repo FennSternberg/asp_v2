@@ -4,6 +4,17 @@
       >{{ fieldLabel }}
     </label>
 
+    <!-- Checkbox Type -->
+    <input
+      v-if="fieldType === 'checkbox'"
+      type="checkbox"
+      :id="fieldId"
+      class="form-check-input"
+      :class="{ 'is-invalid': errors }"
+      :checked="fieldValue"
+      :disabled="readonly"
+    />
+
     <!-- Text Type -->
     <input
       v-if="fieldType === 'text'"
@@ -73,7 +84,24 @@
       multiple
     />
 
-    <!-- Error Messages -->
+    <!-- Slider -->
+    <div v-if="fieldType === 'slider'">
+      <vue-slider
+        v-model="slider_value"
+        :min="min_slider"
+        :max="max_slider"
+        :dotSize="20"
+        :height="6"
+        :processStyle="{
+          backgroundColor: '#5bc0de',
+        }"
+        :tooltip="'always'"
+        :enableCross="false"
+        :class="{ 'is-invalid': errors }"
+        @input="handleSliderChange"
+      ></vue-slider>
+    </div>
+
     <div class="invalid-feedback" v-if="errors">
       {{ errors[0] }}
     </div>
@@ -83,10 +111,18 @@
 <script>
 import Vue3Select from "vue3-select";
 import "vue3-select/dist/vue3-select.css";
+import VueSlider from "@vueform/slider";
+import "@vueform/slider/themes/default.css";
 
 export default {
+  data() {
+    return {
+      slider_value: [null, null],
+    };
+  },
   components: {
     Vue3Select,
+    VueSlider,
   },
   props: {
     fieldId: String,
@@ -99,13 +135,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    min_slider: Number,
+    max_slider: Number,
+    min_value_slider: Number,
+    max_value_slider: Number,
   },
   methods: {
     handleSelectInput(selectedValue) {
       this.$emit("input", selectedValue);
     },
+    // This will be called after user has finished dragging the slider handle
+    handleSliderChange(value) {
+      this.$emit("input", value);
+    },
+  },
+  mounted() {
+    // Set the slider_value to the min and max values provided by props
+    this.slider_value = [this.min_value_slider, this.max_value_slider];
   },
 };
 </script>
-
-
